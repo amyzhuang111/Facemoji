@@ -26,6 +26,8 @@ The full deck covers market research, competitive analysis, product vision, mone
 - Interactive 2×2 positioning chart showing the **whitespace opportunity** in AI + Expressive Communication
 - Virtual keyboard market sizing: $1.1B (2022) → $2B projected by 2032
 
+![Competitive Landscape & Product Overview](Figmav2.png)
+
 ### 3. Market Insight
 - Debunks three fragile industry assumptions: customization = retention, ads sustain free models, emoji novelty drives growth
 - Each assumption backed by sourced evidence from app store data, Grammarly's financials, and Emojipedia research
@@ -53,6 +55,9 @@ Three validated revenue paths with real-world comparables:
 - **Viral mechanics**: The output *is* the marketing — every shared meme reply, caption, or sticker carries distribution
 
 ### 7. Technical Architecture
+
+![Technical Architecture Diagram](slide%208.png)
+
 Lightweight multi-agent system with 6 layers:
 1. **Conversation Context** — Captures messages, detects language & tone from messaging apps
 2. **Context Analyzer** — Real-time conversation snapshot for downstream decisions
