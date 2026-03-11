@@ -1,0 +1,314 @@
+Slide 1 — Context
+Facemoji already sits at the center of expressive communication
+
+Facemoji is one of the largest expression-focused keyboards globally.
+
+550M+ global downloads
+Available in 170+ countries and regions
+
+Core product capabilities:
+
+• 6,000+ emojis
+• stickers and GIFs
+• 1,500+ keyboard themes
+• 200+ fancy text styles
+• AI writing and translation tools
+
+Facemoji ranked #9 in Andreessen Horowitz’s Top GenAI Mobile Apps (2024).
+
+Facemoji already sits at the expression layer of everyday communication.
+
+Slide 2 — Behavior shift + problem
+Communication is expressive, but responding is still manual
+
+Digital communication has shifted toward visual expression.
+
+Key indicators:
+
+10B+ emojis sent globally every day
+
+92% of internet users use emojis
+
+In the U.S.:
+
+• 76% of Gen Z say emojis help them express emotions better than text
+• 69% of Gen Z and Millennials prefer emojis to express tone
+
+Messaging now includes:
+
+emojis
+stickers
+GIFs
+memes
+visual reactions
+
+Yet responding still requires:
+
+Read → Think → Type
+
+Keyboards improve typing speed but do not reduce decision effort.
+
+Slide 3 — User feedback
+We analyzed hundreds of user reviews to identify pain points
+
+We reviewed hundreds of Facemoji user reviews across app stores.
+
+Users consistently praise:
+
+• emojis and stickers
+• playful keyboard themes
+• expressive customization
+
+But complaints cluster around four areas.
+
+Reliability
+
+keyboard glitches
+keyboard disappearing
+lost themes
+
+Control
+
+AI features difficult to disable
+confusing toolbar settings
+
+Typing quality
+
+weak autocorrect
+voice typing errors
+
+Monetization friction
+
+too many ads
+premium features locked
+
+Insight
+
+Users want expressive communication without slowing down typing.
+
+Slide 4 — Competitive landscape
+Current keyboards solve typing or writing, not expression decisions
+
+The keyboard market splits into three categories.
+
+System keyboards
+
+Gboard (Google)
+SwiftKey (Microsoft)
+
+Focus:
+
+typing infrastructure
+prediction
+multilingual typing
+
+Expression keyboards
+
+Facemoji
+Kika Keyboard
+Bobble AI Keyboard
+FancyKey
+GO Keyboard
+
+Focus:
+
+themes
+stickers
+fonts
+emoji libraries
+
+AI writing keyboards
+
+Grammarly Keyboard
+CleverType AI Keyboard
+
+Focus:
+
+grammar correction
+tone rewriting
+professional writing
+
+Gap
+
+No keyboard helps users decide:
+
+how to react
+how to respond
+what to say next
+
+Slide 5 — Market insight + opportunity
+The keyboard market optimized for novelty instead of outcomes
+
+Expression keyboards assume:
+
+Customization drives retention.
+
+But user behavior shows the opposite.
+
+When typing becomes unreliable or intrusive, users switch back to native keyboards like Gboard.
+
+Three common assumptions:
+
+Customization drives engagement
+
+Users actually prioritize speed and reliability.
+
+Ads sustain the free model
+
+Heavy ads disrupt messaging.
+
+Emoji novelty drives growth
+
+Users want faster communication decisions, not more emoji packs.
+
+Opportunity
+
+AI that helps users:
+
+react instantly
+respond quickly
+express tone naturally
+
+Without interrupting typing.
+
+Slide 6 — Product vision
+Facemoji becomes the AI Copilot for expressive communication
+
+Facemoji AI assists users in four core actions.
+
+React
+
+emoji suggestions
+GIFs and stickers
+
+Reply
+
+smart replies
+summaries
+translation
+
+Create
+
+captions
+hashtags
+meme text
+
+Act
+
+search
+planning
+recommendations
+
+All directly inside the keyboard.
+
+Slide 7 — Value creation & U.S. growth
+Why this creates value for users and drives U.S. growth
+
+Facemoji’s primary users are Gen Z expressive communicators.
+
+Proxy demographic data for emoji-heavy apps:
+
+Age	Share
+18–24	51%
+25–34	28%
+35–44	12%
+
+79% of users are under 35.
+
+In the U.S.:
+
+• ~70% of Gen Z regularly use emojis in texts
+• emoji-driven communication dominates platforms like TikTok, Snapchat, and Instagram.
+
+User value
+
+Facemoji AI reduces messaging friction by helping users:
+
+respond faster
+express emotion clearly
+generate social content easily
+communicate across languages
+
+Growth potential
+
+AI-powered communication tools increase:
+
+daily engagement
+retention
+creator and social media use cases
+
+Positioning Facemoji as the AI layer across social messaging apps.
+
+Slide 8 — Technical implementation
+High-level AI architecture
+
+Facemoji AI can be implemented through a layered architecture.
+
+Context layer
+
+conversation text
+recent messages
+language detection
+user preferences
+
+AI understanding layer
+
+LLM-powered intent classification
+
+detects:
+
+reaction intent
+reply intent
+translation needs
+content generation requests
+
+Agent layer
+
+multiple specialized agents:
+
+Reaction agent
+
+emoji and GIF recommendations
+
+Conversation agent
+
+summaries and smart replies
+
+Creation agent
+
+captions, meme text, emoji combos
+
+Action agent
+
+search and planning tasks
+
+Model stack
+
+LLM for generation and summarization
+multimodal models for images and stickers
+ranking models for emoji suggestions
+
+Delivery layer
+
+suggestion chips
+emoji strip
+quick reply buttons
+action cards
+
+AI assistance remains optional, fast, and non-intrusive to preserve typing performance.
+
+Why this final structure works
+
+Each slide answers a specific question.
+
+Slide	Question answered
+1	Why Facemoji matters
+2	What changed in communication
+3	What users complain about
+4	What competitors solve
+5	Where the opportunity is
+6	What the product is
+7	Why users and the U.S. market benefit
+8	How it can technically work
+
+This structure is very close to how top product case studies are structured.

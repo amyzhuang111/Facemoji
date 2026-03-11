@@ -1,0 +1,348 @@
+The keyboard becomes a real-time AI communication assistant.
+
+Instead of typing manually, users get instant AI-generated reactions, replies, and actions.
+
+Example moment:
+
+Friend message
+
+"We're going out tonight. You coming?"
+
+Keyboard immediately suggests
+
+🔥 LETS GOOO
+🙌 I'm down
+😂😂😂
+Drinks tonight?
+
+User taps → message sent instantly.
+
+This is the "one tap conversation" experience.
+
+Core Product Principles
+
+The prototype should demonstrate three core capabilities.
+
+1. Context Awareness
+
+The keyboard reads the conversation and understands:
+
+• tone
+• topic
+• intent
+• emotional signals
+
+Example signals
+
+party
+funny
+planning
+question
+2. Intent Detection
+
+The AI predicts what the user wants to do.
+
+Possible intents
+
+react
+reply
+translate
+summarize
+plan
+search
+3. AI Action Layer
+
+Instead of typing, the keyboard suggests actions.
+
+Examples
+
+Find nearby bars
+Translate message
+Generate meme reply
+Summarize conversation
+Agent Architecture
+
+The prototype should simulate a multi-agent AI system.
+
+Conversation
+      ↓
+Context Analyzer
+      ↓
+Intent Detection
+      ↓
+Agent Orchestrator
+      ↓
+Specialized Agents
+      ↓
+Suggestion Layer
+      ↓
+Keyboard UI
+AI Agents
+Reaction Agent
+
+Purpose
+Generate expressive reactions.
+
+Outputs
+
+🔥 LETS GOOO
+😂😂😂
+💀 I'm dead
+🙌 sounds good
+
+Content types
+
+• emojis
+• GIFs
+• memes
+
+Conversation Agent
+
+Purpose
+Help users write messages.
+
+Capabilities
+
+generate reply
+rewrite text
+translate message
+change tone
+
+Example
+
+User types
+
+tell them im busy tonight
+
+Agent suggests
+
+Sorry I can't make it tonight
+I'm tied up tonight but maybe tomorrow
+Can't tonight — next time
+Action Agent
+
+Purpose
+Turn conversations into tasks.
+
+Example message
+
+want to grab dinner tonight?
+
+Agent suggests
+
+Find restaurants
+Book Uber
+Create group plan
+
+The prototype only needs to simulate action cards.
+
+Creation Agent
+
+Purpose
+Create expressive content.
+
+Outputs
+
+memes
+stickers
+emoji combos
+captions
+
+Example
+
+😂😂😂
+🔥🔥🔥
+custom meme
+Social Twin Agent
+
+Purpose
+Learn user's communication style.
+
+Example
+
+If user usually says
+
+lol
+lmao
+bro
+
+Agent suggests replies in similar tone.
+
+Prototype can simulate this with fixed examples.
+
+Prototype UI Layout
+
+The UI should resemble a real messaging app + keyboard.
+
+Structure
+
+--------------------------------
+Conversation window
+--------------------------------
+Friend messages
+User messages
+--------------------------------
+AI suggestion bar
+--------------------------------
+Keyboard UI
+--------------------------------
+Suggestion Layer
+
+This is the most important part of the UI.
+
+Above the keyboard show clickable chips:
+
+Example
+
+🔥 LETS GOOO
+🙌 I'm down
+😂😂😂
+Drinks tonight?
+Translate
+Find bars
+
+Behavior
+
+User taps chip → message inserted.
+
+Example Conversation Scenarios
+
+Include multiple demos.
+
+Scenario 1 — Party
+
+Friend message
+
+We're going out tonight. You coming?
+
+Suggestions
+
+🔥 LETS GOOO
+🙌 I'm down
+What time?
+Scenario 2 — Funny
+
+Friend message
+
+bro look at this meme
+
+Suggestions
+
+😂😂😂
+💀💀💀
+I'm dead
+Scenario 3 — Planning
+
+Friend message
+
+want to grab dinner?
+
+Suggestions
+
+Sure!
+Where?
+Find restaurants
+Intent Detection (Prototype Logic)
+
+Use simple rules.
+
+Example
+
+if message contains "tonight"
+show party suggestions
+
+if message contains "meme"
+show funny reactions
+
+if message contains "dinner"
+show planning actions
+Suggested Data Model
+
+Example suggestions
+
+const suggestions = {
+  party: [
+    "🔥 LETS GOOO",
+    "🙌 I'm down",
+    "What time?"
+  ],
+
+  funny: [
+    "😂😂😂",
+    "💀💀💀",
+    "I'm dead"
+  ],
+
+  planning: [
+    "Sure!",
+    "Where?",
+    "Find restaurants"
+  ]
+}
+Interaction Behavior
+
+When suggestion clicked
+
+suggestion text appears in chat
+
+message bubble created
+
+suggestions refresh
+
+Optional UX Effects
+
+Add small details that make prototype feel real.
+
+AI thinking indicator
+AI analyzing conversation...
+Suggestion animation
+
+Suggestions slide into keyboard bar.
+
+Emoji reactions
+
+Hover shows larger emoji.
+
+Tech Stack
+
+Simple stack recommended
+
+HTML
+CSS
+JavaScript
+
+Optional
+
+React
+Tailwind
+
+No backend required.
+
+All AI behavior can be simulated.
+
+Prototype Success Criteria
+
+Someone viewing the prototype should instantly understand:
+
+1️⃣ The keyboard understands conversations
+2️⃣ The keyboard suggests responses automatically
+3️⃣ Users can reply with one tap
+
+The prototype should communicate the concept:
+
+"The keyboard becomes an AI communication assistant."
+
+Future Extensions
+
+Later versions could include
+
+• real LLM integration
+• voice input
+• multimodal AI
+• real actions (Uber, search, booking)
+
+Final Goal
+
+This prototype should make it obvious that:
+
+Facemoji can evolve from a keyboard into an AI agent operating across all mobile apps.

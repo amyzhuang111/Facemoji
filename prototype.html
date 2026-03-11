@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facemoji AI Agent — Prototype</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        :root{
+            --white:#FFF;--black:#1A1A1A;--g50:#FAFAFA;--g100:#F5F5F5;--g200:#EBEBEB;--g300:#D1D1D6;--g400:#AEAEB2;--g500:#8E8E93;--g600:#636366;
+            --yellow:#FFDF34;--yellow-bg:#FFF9DB;--orange:#FF9500;--section-bar:#FFB800;--vip-gold:#D4A853;
+            --purple:#9333EA;--purple-soft:rgba(147,51,234,0.08);--green:#34C759;--blue:#007AFF;
+            --friend-bubble:#E5E5EA;--user-bubble:#007AFF;
+        }
+        body{font-family:'Poppins',-apple-system,sans-serif;background:#FAFAFA;color:var(--black)}
+
+        /* BACK TO HOME */
+        .back-home{position:fixed;top:20px;left:24px;z-index:100;color:#94A3B8;font-size:14px;font-weight:600;text-decoration:none;font-family:'Inter',-apple-system,sans-serif;padding:8px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;backdrop-filter:blur(8px);transition:all .2s}
+        .back-home:hover{color:#FFF;background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.25)}
+
+        /* ══════ INTERACTIVE HERO SECTION ══════ */
+        .interactive-hero{background:#0F0F1A;display:flex;flex-direction:column;align-items:center;padding:60px 40px 80px;gap:40px}
+        .info-panel{max-width:560px;color:#E2E8F0;text-align:center}
+        .info-panel .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center}
+        .logo-icon{width:44px;height:44px;background:var(--yellow);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--black)}
+        .logo-text{font-size:20px;font-weight:800;color:#FFF}
+        .logo-text span{color:var(--yellow)}
+        .info-panel h1{font-size:30px;font-weight:700;line-height:1.25;color:#FFF;margin-bottom:16px;letter-spacing:-0.5px}
+        .info-panel h1 em{font-style:normal;background:linear-gradient(135deg,var(--yellow),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .info-panel .desc{font-size:15px;color:#94A3B8;line-height:1.7;margin-bottom:28px;font-family:'Inter',sans-serif;font-weight:400}
+        .hero-cta{display:inline-block;background:var(--yellow);color:var(--black);font-size:15px;font-weight:700;padding:14px 36px;border-radius:12px;cursor:pointer;margin-bottom:20px;transition:all .15s;letter-spacing:-0.2px}
+        .hero-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,223,52,0.3)}
+        .hero-cta:active{transform:scale(0.98)}
+        .hero-stats{font-size:13px;color:#64748B;font-family:'Inter',sans-serif;font-weight:400;margin-bottom:16px}
+        .hero-note{font-size:12px;color:#475569;font-family:'Inter',sans-serif;font-weight:400;line-height:1.6;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px}
+
+        /* INTERACTIVE PHONE — iPhone 15 Pro */
+        .phone{width:430px;min-width:430px;height:932px;background:var(--white);border-radius:56px;overflow:hidden;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.15),0 0 0 1.5px #8E8E93,0 0 0 3px #C7C7CC,0 0 0 4.5px #8E8E93,0 0 0 6px #636366,0 30px 60px rgba(0,0,0,0.45),0 60px 120px rgba(0,0,0,0.25)}
+        .phone::before{content:'';position:absolute;inset:0;border-radius:54px;border:1px solid rgba(255,255,255,0.08);pointer-events:none;z-index:100}
+        .phone .status-bar{height:58px;background:var(--white);display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 8px;position:relative;z-index:10}
+        .phone .status-bar .time{font-size:17px;font-weight:600;color:var(--black);font-variant-numeric:tabular-nums;letter-spacing:-0.3px}
+        .phone .dynamic-island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#000;border-radius:22px;z-index:20;box-shadow:0 0 0 1px rgba(0,0,0,0.12)}
+        .app{height:calc(100% - 54px);display:flex;flex-direction:column;background:var(--white);position:relative}
+        .screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+        .screen.active{display:flex}
+        .scroll-content{flex:1;overflow-y:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+        .scroll-content::-webkit-scrollbar{display:none}
+
+        /* TAB BAR */
+        .tab-bar{background:var(--white);display:flex;justify-content:space-around;padding:6px 4px 28px;border-top:.5px solid var(--g200);position:relative;z-index:10}
+        .tab-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;padding:6px 14px;font-family:inherit;border-radius:22px;transition:all .2s}
+        .tab-item .tab-icon{font-size:22px;color:var(--g400);width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+        .tab-item .tab-label{font-size:10px;font-weight:600;color:var(--g500)}
+        .tab-item.active{background:#ECECEC}
+        .tab-item.active .tab-icon{color:var(--black)}
+        .tab-item.active .tab-label{color:var(--black);font-weight:700}
+        .font-icon{font-size:14px;font-weight:800;width:22px;height:22px;border-radius:5px;border:2.5px solid currentColor;display:flex;align-items:center;justify-content:center;line-height:1}
+        .tab-item.active .font-icon{background:var(--black);color:var(--white);border-color:var(--black)}
+
+        /* COMMON PHONE ELEMENTS */
+        .screen-title{font-size:26px;font-weight:800;padding:4px 20px 0}
+        .vip-banner{margin:10px 20px;background:linear-gradient(135deg,#1A1A1A 0%,#2D2D2D 60%,#1A1A1A 100%);border-radius:16px;padding:22px 20px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
+        .vip-banner::after{content:'';position:absolute;top:-30px;right:20px;width:120px;height:120px;border:1px solid rgba(212,168,83,0.12);border-radius:50%}
+        .vip-crown{font-size:52px}
+        .vip-text h3{color:var(--vip-gold);font-size:18px;font-weight:500}
+        .vip-text p{color:#FFF;font-size:15px;font-weight:700;letter-spacing:1.5px;margin-top:2px}
+        .pill-row{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto}
+        .pill-row::-webkit-scrollbar{display:none}
+        .pill{padding:10px 22px;border-radius:22px;border:1.5px solid var(--g200);background:var(--white);font-size:14px;font-weight:600;color:var(--g600);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s}
+        .pill.active{background:var(--black);color:var(--white);border-color:var(--black)}
+        .section-header{display:flex;align-items:center;gap:8px;padding:20px 20px 12px}
+        .section-bar{width:4px;height:18px;background:var(--section-bar);border-radius:2px}
+        .section-title{font-size:17px;font-weight:700;color:var(--black)}
+        .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px}
+        .feature-card{background:var(--white);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s;border:1px solid #F0F0F0;position:relative;min-height:130px}
+        .feature-card:active{transform:scale(0.97)}
+        .feature-card .card-emoji{position:absolute;top:16px;right:16px;font-size:32px}
+        .feature-card h4{font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px;padding-right:40px}
+        .feature-card p{font-size:13px;color:var(--g500);line-height:1.4;padding-right:20px}
+        .theme-badge{position:absolute;top:8px;left:8px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;z-index:2}
+        .theme-badge.new{background:#34C759;color:#FFF}
+        .theme-badge.hot{background:#FF9500;color:#FFF}
+        .theme-badge.vip{background:linear-gradient(135deg,#FFD700,#FFA500);color:#FFF}
+        .font-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px}
+        .font-card{background:var(--g100);border-radius:14px;height:76px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:2.5px solid transparent;font-weight:500;color:var(--black)}
+        .font-card.active{border-color:var(--yellow);background:#FFFEF5}
+        .ai-header{display:flex;align-items:center;gap:20px;padding:4px 20px 6px}
+        .ai-header-tab{font-size:24px;font-weight:800;color:var(--g400);cursor:pointer;border:none;background:none;font-family:inherit;position:relative;padding:4px 0}
+        .ai-header-tab.active{color:var(--black)}
+        .ai-header-tab.active::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:8px;background:rgba(255,223,52,0.35);border-radius:2px;z-index:-1}
+        .new-badge{display:inline-block;background:linear-gradient(135deg,#9333EA,#7C3AED);color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+        .ai-card-grid{margin:0 20px;border:1px solid #EBEBEB;border-radius:14px;overflow:hidden}
+        .ai-card-row{display:flex;border-bottom:1px solid #EBEBEB}
+        .ai-card-row:last-child{border-bottom:none}
+        .ai-card-row .ai-card{flex:1;padding:18px 16px;cursor:pointer;position:relative;min-height:120px}
+        .ai-card-row .ai-card:first-child{border-right:1px solid #EBEBEB}
+        .ai-card .ac-title{font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px;padding-right:40px}
+        .ai-card .ac-desc{font-size:12.5px;color:var(--g500);line-height:1.4}
+        .ai-card .ac-icon{position:absolute;top:16px;right:16px;font-size:28px}
+        .upload-card{margin:0 20px 10px;background:var(--white);border-radius:16px;padding:16px;border:1px solid #EBEBEB}
+        .upload-card .upload-header{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+        .upload-card .preview{width:70px;height:70px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:32px}
+        .upload-btn{background:var(--yellow);border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;color:var(--black);cursor:pointer;font-family:inherit;width:100%;text-align:center}
+        .settings-list{padding:0 20px}
+        .settings-item{display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:.5px solid #F0F0F0;cursor:pointer}
+        .settings-item .s-icon{font-size:20px;width:40px;text-align:center}
+        .settings-item .s-label{flex:1;font-size:16px;font-weight:500;color:var(--black)}
+        .settings-item .s-value{font-size:15px;color:var(--g500)}
+        .settings-item .s-arrow{color:var(--g400);font-size:20px}
+        .art-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px}
+        .art-card{background:var(--white);border-radius:14px;padding:14px;border:1px solid #EBEBEB;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+        .art-card .art-preview{font-size:11px;line-height:1.2;font-family:monospace;color:var(--g600);text-align:center;flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column}
+        .art-card .art-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--g500);padding-top:8px}
+        .rank-badge{position:absolute;top:-4px;right:-4px;width:28px;height:28px;border-radius:50%;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#FFF;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+        .rank-badge.gold{background:linear-gradient(135deg,#FFD700,#FFA500)}
+        .rank-badge.silver{background:linear-gradient(135deg,#C0C0C0,#A0A0A0)}
+        .rank-badge.bronze{background:linear-gradient(135deg,#CD7F32,#B8690E)}
+
+        /* CHAT */
+        .chat-container{display:flex;flex-direction:column;height:100%;overflow:hidden}
+        .chat-header-bar{padding:6px 20px 10px;display:flex;align-items:center;gap:12px;border-bottom:.5px solid var(--g200)}
+        .chat-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px}
+        .chat-contact-name{font-size:16px;font-weight:700;color:var(--black)}
+        .chat-contact-status{font-size:11px;color:var(--green);font-weight:600}
+        .scenario-tabs{display:flex;gap:4px;padding:8px 12px;overflow-x:auto;background:var(--g50);border-bottom:0.5px solid var(--g200)}
+        .scenario-tabs::-webkit-scrollbar{display:none}
+        .scenario-tab{padding:7px 14px;border-radius:20px;border:none;background:none;font-size:12px;font-weight:600;color:var(--g500);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s}
+        .scenario-tab:active{transform:scale(0.96)}
+        .scenario-tab.active{background:var(--black);color:var(--white);box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+        .messages{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:4px}
+        .messages::-webkit-scrollbar{display:none}
+        .msg{max-width:72%;padding:10px 14px;border-radius:20px;font-size:16px;line-height:1.4;animation:msgIn .35s cubic-bezier(.25,.46,.45,.94)}
+        @keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .msg.friend{background:var(--friend-bubble);color:var(--black);align-self:flex-start;border-bottom-left-radius:6px}
+        .msg.user{background:var(--user-bubble);color:var(--white);align-self:flex-end;border-bottom-right-radius:6px}
+        .typing-indicator{align-self:flex-start;padding:12px 16px;background:var(--friend-bubble);border-radius:18px;border-bottom-left-radius:4px;display:none;gap:4px}
+        .typing-indicator.show{display:flex}
+        .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--g400);animation:bounce 1.4s infinite}
+        .typing-dot:nth-child(2){animation-delay:.2s}
+        .typing-dot:nth-child(3){animation-delay:.4s}
+        @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+        .ai-bar{background:linear-gradient(180deg,#F8F5FF 0%,#F3F0FF 40%,var(--g50) 100%);border-top:2px solid var(--purple);padding:10px 14px 8px;box-shadow:0 -6px 24px rgba(147,51,234,0.1)}
+        .ai-bar-header{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+        .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .ai-bar-label{font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px}
+        .agent-indicator{display:none;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--purple);background:var(--purple-soft);padding:3px 8px;border-radius:6px;margin-left:auto}
+        .agent-indicator.show{display:inline-flex}
+        .context-strip{display:none;padding:8px 12px;font-size:10px;color:var(--g500);line-height:1.6;background:rgba(147,51,234,0.04);border:1px solid rgba(147,51,234,0.12);border-radius:10px;margin-bottom:8px;animation:ctxFade .4s ease-out;backdrop-filter:blur(8px)}
+        .context-strip.show{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+        @keyframes ctxFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+        .context-strip .ctx-item{display:flex;align-items:center;gap:4px}
+        .context-strip .ctx-label{font-weight:700;color:var(--g500);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .context-strip .ctx-value{color:var(--purple);font-weight:700;font-size:10px}
+        .ctx-emojis{margin-left:auto;font-size:14px;letter-spacing:2px;animation:ctxFade .4s ease-out .1s backwards}
+        .style-badge{display:none;font-size:10px;padding:8px 10px;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(255,223,52,0.08),rgba(255,149,0,0.06));border:1px solid rgba(255,223,52,0.2);border-radius:10px;margin-bottom:6px}
+        .style-badge.show{display:flex}
+        .style-badge .style-icon{font-size:14px}
+        .style-badge .style-label{color:var(--g500);font-weight:600;font-size:10px}
+        .style-badge .style-tags{display:flex;gap:4px;margin-left:auto}
+        .style-badge .style-tag{background:#FFF9DB;border:1px solid rgba(255,159,0,0.25);color:#B45309;padding:3px 10px;border-radius:6px;font-weight:700;font-size:9px;cursor:pointer;transition:all .15s}
+        .style-badge .style-tag:hover{transform:scale(1.05)}
+        .style-badge .style-tag.active{background:linear-gradient(135deg,#FFDF34,#FFB800);border-color:#FFB800;color:var(--black);box-shadow:0 1px 4px rgba(255,183,0,0.3)}
+        .agent-tabs{display:flex;gap:0;margin-bottom:6px;background:var(--g100);border-radius:8px;padding:2px;display:none}
+        .agent-tabs.show{display:flex}
+        .agent-tab{flex:1;padding:5px 0;border:none;background:none;font-size:10px;font-weight:600;color:var(--g500);cursor:pointer;border-radius:6px;font-family:inherit;transition:all .15s;text-align:center}
+        .agent-tab.active{background:var(--white);color:var(--purple);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .ai-thinking{font-size:11px;color:var(--purple);font-weight:600;display:none;padding:6px 0;animation:thinkPulse 1.5s ease-in-out infinite}
+        .ai-thinking.show{display:flex;align-items:center;gap:6px}
+        .ai-thinking::before{content:'';width:14px;height:14px;border:2px solid rgba(147,51,234,0.2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes thinkPulse{0%,100%{opacity:1}50%{opacity:.6}}
+        .ai-chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0 4px;scroll-snap-type:x mandatory}
+        .ai-chips::-webkit-scrollbar{display:none}
+        .ai-chip{padding:12px 20px;border-radius:22px;border:1.5px solid var(--g200);background:var(--white);font-size:15px;font-weight:600;color:var(--black);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s cubic-bezier(.25,.46,.45,.94);animation:chipSlide .35s ease-out backwards;box-shadow:0 2px 8px rgba(0,0,0,0.06);scroll-snap-align:start}
+        .ai-chip:nth-child(1){animation-delay:.05s}.ai-chip:nth-child(2){animation-delay:.12s}.ai-chip:nth-child(3){animation-delay:.19s}.ai-chip:nth-child(4){animation-delay:.26s}.ai-chip:nth-child(5){animation-delay:.33s}
+        @keyframes chipSlide{from{opacity:0;transform:translateY(8px) scale(0.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .ai-chip:hover{border-color:var(--g300);box-shadow:0 3px 12px rgba(0,0,0,0.1);transform:translateY(-1px)}
+        .ai-chip:active{transform:scale(0.94);border-color:var(--purple);background:var(--purple-soft);box-shadow:0 1px 4px rgba(147,51,234,0.15)}
+        .ai-chip.action{border-color:rgba(139,92,246,0.25);color:var(--purple);background:linear-gradient(135deg,rgba(147,51,234,0.06),rgba(139,92,246,0.12));font-weight:700}
+        .keyboard{background:#D1D3D9;padding:10px 4px 4px}
+        .kb-row{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
+        .kb-key{min-width:34px;height:44px;border-radius:6px;border:none;background:var(--white);font-size:17px;font-weight:400;color:var(--black);cursor:pointer;font-family:-apple-system,'SF Pro Text',sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 0 #898A8D;transition:background .08s}
+        .kb-key:active{background:#B5B7BC;transition:none}
+        .kb-key.sp{background:#ADB3BC;min-width:44px;font-size:14px;box-shadow:0 1px 0 #898A8D;font-weight:500}
+        .kb-key.sp:active{background:#8E9299}
+        .kb-key.space{flex:1;max-width:195px;font-size:15px;color:var(--g600);font-weight:400;letter-spacing:-0.2px}
+        .kb-key.send{background:var(--user-bubble);color:white;min-width:44px;font-size:14px;font-weight:700;box-shadow:0 1px 0 #0062CC}
+        .kb-key.send:active{background:#0062CC}
+        .kb-bottom{display:flex;justify-content:center;gap:6px;padding:0 4px}
+        .home-bar{height:32px;background:#D1D3D9;display:flex;align-items:center;justify-content:center}
+        .home-indicator{width:140px;height:5px;background:#000;border-radius:3px;opacity:.18}
+        .toast{position:absolute;top:70px;left:50%;transform:translateX(-50%) translateY(-10px);background:rgba(0,0,0,0.85);color:#FFF;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:50;pointer-events:none;white-space:nowrap}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+        .mic-key:active svg rect,.mic-key:active svg path{stroke:#E53E3E}
+        .voice-modal{display:none;position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);z-index:60;border-radius:0 0 36px 36px;padding:40px 20px 60px;text-align:center;animation:fadeUp .25s ease-out}
+        .voice-modal.show{display:block}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .voice-waves{display:flex;justify-content:center;align-items:center;gap:4px;height:40px;margin-bottom:16px}
+        .voice-wave{width:4px;border-radius:4px;background:var(--purple);animation:voiceWave 1s ease-in-out infinite}
+        .voice-wave:nth-child(1){height:12px;animation-delay:0s}.voice-wave:nth-child(2){height:24px;animation-delay:.1s}.voice-wave:nth-child(3){height:36px;animation-delay:.2s}.voice-wave:nth-child(4){height:28px;animation-delay:.3s}.voice-wave:nth-child(5){height:16px;animation-delay:.4s}
+        @keyframes voiceWave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.4)}}
+        .voice-label{color:#FFF;font-size:14px;font-weight:600;margin-bottom:6px}
+        .voice-sublabel{color:#94A3B8;font-size:11px}
+        .voice-cancel{color:#EF4444;font-size:12px;font-weight:600;margin-top:16px;cursor:pointer}
+
+        /* ══════ SHOWCASE SECTIONS ══════ */
+        .showcase-divider{height:1px;background:var(--g200);max-width:1200px;margin:0 auto}
+        .showcase{max-width:1200px;margin:0 auto;padding:80px 40px}
+        .showcase-label{font-size:11px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:2.5px;margin-bottom:14px}
+        .showcase-heading{font-size:clamp(26px,3vw,38px);font-weight:700;line-height:1.25;margin-bottom:14px;letter-spacing:-0.5px}
+        .showcase-desc{font-size:15px;color:var(--g500);line-height:1.8;max-width:560px;margin-bottom:48px;font-weight:400;font-family:'Inter',sans-serif}
+        .showcase-desc strong{color:var(--black);font-weight:600}
+
+        /* SHOWCASE ROW: mockup + text side by side */
+        .showcase-row{display:flex;gap:60px;align-items:center;margin-bottom:80px}
+        .showcase-row.reverse{flex-direction:row-reverse}
+        .showcase-row .showcase-text{flex:1}
+        .showcase-row .showcase-text h3{font-size:22px;font-weight:700;margin-bottom:10px;color:var(--black);letter-spacing:-0.3px}
+        .showcase-row .showcase-text p{font-size:14px;color:var(--g500);line-height:1.75;margin-bottom:14px;font-weight:400;font-family:'Inter',sans-serif}
+        .showcase-row .showcase-text .detail{font-size:13px;color:var(--g600);line-height:1.65;font-weight:400;font-family:'Inter',sans-serif}
+        .showcase-row .showcase-text .detail strong{color:var(--black);font-weight:600}
+        .showcase-mockups{display:flex;gap:20px;flex-shrink:0}
+
+        /* SMALL STATIC PHONE */
+        .sm-phone{width:260px;background:var(--white);border-radius:36px;overflow:hidden;box-shadow:0 0 0 2px #E0E0E0,0 16px 48px rgba(0,0,0,0.1);flex-shrink:0}
+        .sm-phone .sm-status{height:38px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 20px 3px;font-size:11px;font-weight:600;position:relative}
+        .sm-phone .sm-island{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:14px}
+        .sm-phone .sm-inner{position:relative}
+        .sm-phone .sm-tab-bar{display:flex;justify-content:space-around;padding:4px 4px 16px;border-top:.5px solid var(--g200);font-size:7px;font-weight:600;color:var(--g500)}
+        .sm-phone .sm-tab{display:flex;flex-direction:column;align-items:center;gap:2px}
+        .sm-phone .sm-tab .ic{font-size:16px;color:var(--g400)}
+        .sm-phone .sm-tab.active{background:#ECECEC;border-radius:14px;padding:3px 8px}
+        .sm-phone .sm-tab.active .ic{color:var(--black)}
+        .sm-phone .sm-tab.active .lb{color:var(--black);font-weight:700}
+        .sm-home{width:80px;height:4px;background:#000;border-radius:3px;opacity:.12;margin:3px auto 6px}
+
+        /* Small phone internal elements */
+        .sm-title{font-size:18px;font-weight:800;padding:3px 14px;color:var(--black)}
+        .sm-vip{margin:6px 14px;background:linear-gradient(135deg,#1A1A1A,#2D2D2D);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px}
+        .sm-vip .crown{font-size:32px}
+        .sm-vip h3{color:var(--vip-gold);font-size:12px}
+        .sm-vip p{color:#FFF;font-size:10px;font-weight:700;letter-spacing:1px}
+        .sm-pills{display:flex;gap:4px;padding:0 14px 8px;overflow:hidden}
+        .sm-pill{padding:6px 14px;border-radius:16px;border:1px solid var(--g200);font-size:10px;font-weight:600;color:var(--g600);white-space:nowrap}
+        .sm-pill.active{background:var(--black);color:var(--white);border-color:var(--black)}
+        .sm-section{display:flex;align-items:center;gap:5px;padding:12px 14px 8px}
+        .sm-section-bar{width:3px;height:12px;background:var(--section-bar);border-radius:2px}
+        .sm-section-title{font-size:12px;font-weight:700;color:var(--black)}
+        .sm-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px}
+        .sm-card{background:var(--white);border-radius:10px;padding:12px;border:1px solid #F0F0F0;position:relative;min-height:80px}
+        .sm-card h4{font-size:11px;font-weight:700;color:var(--black);margin-bottom:3px;padding-right:24px}
+        .sm-card p{font-size:9px;color:var(--g500);line-height:1.3}
+        .sm-card .emoji{position:absolute;top:10px;right:10px;font-size:20px}
+        .sm-card .badge{position:absolute;top:5px;left:5px;font-size:7px;font-weight:700;padding:2px 5px;border-radius:3px;text-transform:uppercase}
+        .sm-card .badge.hot{background:#FF9500;color:#FFF}
+        .sm-card .badge.new{background:#34C759;color:#FFF}
+        .sm-font-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px}
+        .sm-font{background:var(--g100);border-radius:10px;height:50px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--black);border:2px solid transparent}
+        .sm-font.active{border-color:var(--yellow);background:#FFFEF5}
+        .sm-settings{padding:0 14px}
+        .sm-setting{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:.5px solid #F0F0F0;font-size:12px}
+        .sm-setting .icon{font-size:14px;width:24px;text-align:center}
+        .sm-setting .label{flex:1;font-weight:500;color:var(--black)}
+        .sm-setting .arr{color:var(--g400)}
+
+        /* AI grid small */
+        .sm-ai-grid{margin:0 14px;border:1px solid #EBEBEB;border-radius:10px;overflow:hidden}
+        .sm-ai-row{display:flex;border-bottom:1px solid #EBEBEB}
+        .sm-ai-row:last-child{border-bottom:none}
+        .sm-ai-card{flex:1;padding:12px 10px;position:relative;min-height:70px}
+        .sm-ai-card:first-child{border-right:1px solid #EBEBEB}
+        .sm-ai-card .t{font-size:11px;font-weight:700;color:var(--black);margin-bottom:3px;padding-right:24px}
+        .sm-ai-card .d{font-size:8px;color:var(--g500);line-height:1.3}
+        .sm-ai-card .ic{position:absolute;top:10px;right:10px;font-size:18px}
+        .sm-ai-tabs{display:flex;gap:12px;padding:4px 14px 4px}
+        .sm-ai-tab{font-size:16px;font-weight:800;color:var(--g400);position:relative;padding:2px 0}
+        .sm-ai-tab.active{color:var(--black)}
+        .sm-ai-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:rgba(255,223,52,0.35);border-radius:2px;z-index:-1}
+        .sm-new-badge{display:inline-block;background:linear-gradient(135deg,#9333EA,#7C3AED);color:white;font-size:7px;font-weight:700;padding:1px 5px;border-radius:3px;text-transform:uppercase;margin-left:3px;vertical-align:middle}
+
+        /* Agent arch */
+        .arch-box{display:inline-block;background:var(--white);border-radius:24px;padding:48px 56px;box-shadow:0 4px 30px rgba(0,0,0,0.06);text-align:center;max-width:500px}
+        .arch-step{padding:12px 28px;border-radius:12px;font-weight:700;font-size:14px}
+        .arch-arrow{color:var(--g400);font-size:18px;margin:4px 0}
+        .arch-agents{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+        .arch-agent{padding:8px 14px;border-radius:10px;background:var(--yellow-bg);border:1px solid rgba(255,214,10,0.3);font-weight:600;font-size:12px;color:var(--black)}
+
+        /* FOOTER */
+        .page-footer{background:#1A1A2E;padding:80px 40px;text-align:center}
+        .footer-heading{font-size:clamp(24px,3vw,36px);font-weight:700;color:#FFF;margin-bottom:24px;letter-spacing:-0.5px}
+        .footer-body{max-width:480px;margin:0 auto 28px}
+        .footer-body p{color:#94A3B8;font-size:15px;font-family:'Inter',sans-serif;font-weight:400;line-height:1.8;margin-bottom:4px}
+        .footer-body p strong{color:#FFF;font-weight:600}
+        .footer-stat{display:inline-block;background:rgba(255,223,52,0.1);border:1px solid rgba(255,223,52,0.3);color:var(--yellow);font-size:14px;font-weight:700;padding:10px 24px;border-radius:30px}
+
+        @media(max-width:1100px){
+            .showcase-row{flex-direction:column!important;gap:40px;align-items:flex-start}
+            .showcase-mockups{justify-content:center;width:100%}
+        }
+        @media(max-width:900px){
+            .interactive-hero{padding:40px 20px 60px;gap:24px}
+            .info-panel{max-width:390px}
+            .phone{width:360px;min-width:360px;height:780px;border-radius:48px}
+            .showcase{padding:60px 20px}
+        }
+        @media(max-width:600px){
+            .showcase-mockups{flex-direction:column;align-items:center}
+        }
+    </style>
+</head>
+<body>
+
+<a href="/" class="back-home">&larr; Back to Home</a>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1: INTERACTIVE PHONE + INFO PANEL
+     ══════════════════════════════════════════════ -->
+<div class="interactive-hero">
+    <div class="info-panel">
+        <div class="logo-row"><div class="logo-icon">F</div><div class="logo-text">Facemoji <span>AI Agent</span></div></div>
+        <h1>One tap. <em>Every conversation.</em></h1>
+        <p class="desc">The keyboard that reads context, detects intent, and suggests the perfect reply — so users never have to type.</p>
+        <div class="hero-cta" onclick="switchTab('ai',document.querySelectorAll('.tab-item')[3])">Try the interactive demo &darr;</div>
+        <div class="hero-stats">5 AI agents &bull; 550M+ downloads &bull; 170+ countries</div>
+    </div>
+
+    <!-- INTERACTIVE PHONE -->
+    <div class="phone">
+        <div class="status-bar"><div class="time" id="clockTime">9:41</div><div style="display:flex;gap:5px;align-items:center;font-size:12px">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="4.5" y="1.5" width="3" height="10.5" rx="1" fill="#1A1A1A"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0" y="0" width="21" height="12" rx="3" stroke="#1A1A1A" stroke-width="1"/><rect x="1.5" y="1.5" width="15" height="9" rx="2" fill="#1A1A1A"/></svg>
+        </div></div>
+        <div class="dynamic-island"></div>
+        <div class="app">
+            <!-- THEMES -->
+            <div class="screen active" id="screen-themes">
+                <div style="padding:4px 20px 0"><h2 class="screen-title">Themes</h2></div>
+                <div class="scroll-content">
+                    <div class="vip-banner"><div class="vip-crown">&#128081;</div><div class="vip-text"><h3>Facemoji &#8250;</h3><p>VIP MEMBER</p></div></div>
+                    <div class="pill-row"><button class="pill active" onclick="switchPill(this)">Trending</button><button class="pill" onclick="switchPill(this)">Game</button><button class="pill" onclick="switchPill(this)">Anime</button><button class="pill" onclick="switchPill(this)">KPOP</button><button class="pill" onclick="switchPill(this)">Cute</button></div>
+                    <div class="card-grid">
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge hot">Hot</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#FF6B6B,#FF8E53);opacity:0.15;border-radius:14px"></div><h4>Sunset Vibes</h4><p>Warm gradient</p><div class="card-emoji">&#127773;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge new">New</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#A78BFA,#C4B5FD);opacity:0.15;border-radius:14px"></div><h4>Lavender Dream</h4><p>Soft purple</p><div class="card-emoji">&#128156;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge hot">Hot</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#34D399,#6EE7B7);opacity:0.15;border-radius:14px"></div><h4>Mint Fresh</h4><p>Cool green</p><div class="card-emoji">&#127807;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge new">New</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#FDA4AF,#FECDD3);opacity:0.2;border-radius:14px"></div><h4>Sakura</h4><p>Cherry blossom</p><div class="card-emoji">&#127800;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge vip">VIP</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#1A1A2E,#2D2D44);opacity:0.12;border-radius:14px"></div><h4>Dark Mode</h4><p>Classic dark</p><div class="card-emoji">&#127761;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#667EEA,#764BA2);opacity:0.12;border-radius:14px"></div><h4>Galaxy</h4><p>Space theme</p><div class="card-emoji">&#127756;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div class="theme-badge hot">Hot</div><div style="position:absolute;inset:0;background:linear-gradient(135deg,#F59E0B,#FBBF24);opacity:0.15;border-radius:14px"></div><h4>Golden Hour</h4><p>Warm tones</p><div class="card-emoji">&#9728;&#65039;</div></div>
+                        <div class="feature-card" style="overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#3B82F6,#60A5FA);opacity:0.12;border-radius:14px"></div><h4>Ocean Wave</h4><p>Cool blue</p><div class="card-emoji">&#127754;</div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- FONTS -->
+            <div class="screen" id="screen-fonts">
+                <div style="padding:4px 20px 0"><h2 class="screen-title">Fonts</h2></div>
+                <div class="scroll-content">
+                    <div class="vip-banner"><div class="vip-crown">&#128081;</div><div class="vip-text"><h3>Facemoji &#8250;</h3><p>VIP MEMBER</p></div></div>
+                    <div class="pill-row"><button class="pill active" onclick="switchPill(this)">Popular</button><button class="pill" onclick="switchPill(this)">Normal</button><button class="pill" onclick="switchPill(this)">Premium</button></div>
+                    <div class="section-header"><div class="section-bar"></div><span class="section-title">Script</span></div>
+                    <div class="font-grid"><div class="font-card active">Charity</div><div class="font-card">diana</div></div>
+                    <div class="section-header"><div class="section-bar"></div><span class="section-title">Cute</span></div>
+                    <div class="font-grid"><div class="font-card">comic</div><div class="font-card">Typewriter</div></div>
+                    <div class="section-header"><div class="section-bar"></div><span class="section-title">SMALLCAP</span></div>
+                    <div class="font-grid"><div class="font-card">Castle</div><div class="font-card">CARTOON</div></div>
+                    <div class="section-header"><div class="section-bar"></div><span class="section-title">Festival</span></div>
+                    <div class="font-grid"><div class="font-card">Shape</div><div class="font-card">CIRCLE</div></div>
+                </div>
+            </div>
+            <!-- EMOJI -->
+            <div class="screen" id="screen-emoji">
+                <div style="padding:4px 20px 0"><h2 class="screen-title">Face Emoji</h2></div>
+                <div class="scroll-content">
+                    <div class="ai-header"><button class="ai-header-tab active" onclick="switchEmojiTab(this,'fe')">Face Emoji</button><button class="ai-header-tab" onclick="switchEmojiTab(this,'ta')">Text Art</button></div>
+                    <div id="emoji-fe">
+                        <div style="text-align:center;padding:16px"><p style="font-size:13px;color:var(--g500)">&#128522;&#128525; — Turn Your Photo into Stickers —</p></div>
+                        <div class="section-header"><div class="section-bar"></div><span class="section-title">Personal Emojis</span></div>
+                        <div class="upload-card"><div class="upload-header"><div class="preview" style="background:var(--g100)">&#128103;</div><div><h4 style="font-size:15px;font-weight:700">Personal Emojis</h4><p style="font-size:12px;color:var(--g500)">Turn yourself into stickers</p></div></div><button class="upload-btn" onclick="showToast('Uploading...')">UPLOAD &#8250; Half-Body Photo</button></div>
+                        <div class="section-header"><div class="section-bar"></div><span class="section-title">HOT RANK</span></div>
+                        <div class="art-grid">
+                            <div class="art-card"><div class="rank-badge gold">1</div><div class="art-preview" style="font-size:36px;line-height:1">&#128054;</div><div class="art-meta"><div style="font-weight:600">@Facemoji</div><div>&#128077; 1.1M</div></div></div>
+                            <div class="art-card"><div class="rank-badge silver">2</div><div class="art-preview" style="font-size:36px;line-height:1">&#128571;</div><div class="art-meta"><div style="font-weight:600">@Facemoji</div><div>&#10084; 999K</div></div></div>
+                            <div class="art-card"><div class="rank-badge bronze">3</div><div class="art-preview" style="font-size:36px;line-height:1">&#129409;</div><div class="art-meta"><div style="font-weight:600">@EmojiPro</div><div>&#128077; 870K</div></div></div>
+                            <div class="art-card"><div class="art-preview" style="font-size:36px;line-height:1">&#128060;</div><div class="art-meta"><div style="font-weight:600">@CuteDesign</div><div>&#128077; 650K</div></div></div>
+                        </div>
+                    </div>
+                    <div id="emoji-ta" style="display:none">
+                        <div class="section-header"><div class="section-bar"></div><span class="section-title">HOT RANK</span></div>
+                        <div class="art-grid">
+                            <div class="art-card"><div class="rank-badge gold">1</div><div class="art-preview"><div class="pixel-art-mini" style="display:grid;grid-template-columns:repeat(9,6px);gap:1px">
+                                <span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFF;width:6px;height:6px;border-radius:1px;border:1px solid #ccc"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFF;width:6px;height:6px;border-radius:1px;border:1px solid #ccc"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#000;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                            </div></div><div class="art-meta"><div style="font-weight:600">@PixelKing</div><div>&#128077; 2.3M</div></div></div>
+                            <div class="art-card"><div class="rank-badge silver">2</div><div class="art-preview"><div class="pixel-art-mini" style="display:grid;grid-template-columns:repeat(7,6px);gap:1px">
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FF69B4;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                            </div></div><div class="art-meta"><div style="font-weight:600">@ArtLover</div><div>&#10084; 1.8M</div></div></div>
+                            <div class="art-card"><div class="rank-badge bronze">3</div><div class="art-preview"><div class="pixel-art-mini" style="display:grid;grid-template-columns:repeat(7,6px);gap:1px">
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#FFD700;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                            </div></div><div class="art-meta"><div style="font-weight:600">@StarMaker</div><div>&#128077; 1.2M</div></div></div>
+                            <div class="art-card"><div class="art-preview"><div class="pixel-art-mini" style="display:grid;grid-template-columns:repeat(8,6px);gap:1px">
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#4CAF50;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                                <span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:#8B4513;width:6px;height:6px;border-radius:1px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span><span style="background:transparent;width:6px;height:6px"></span>
+                            </div></div><div class="art-meta"><div style="font-weight:600">@TreeHouse</div><div>&#128077; 890K</div></div></div>
+                        </div>
+                        <div class="section-header"><div class="section-bar"></div><span class="section-title">Create Your Own</span></div>
+                        <div style="margin:0 20px 16px;background:var(--white);border-radius:16px;padding:16px;border:1px solid #EBEBEB">
+                            <div id="pixelCanvas" style="display:grid;grid-template-columns:repeat(16,1fr);gap:1px;aspect-ratio:1;background:var(--g200);border-radius:8px;overflow:hidden;margin-bottom:12px"></div>
+                            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:4px 0">
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#000;cursor:pointer;border:2.5px solid var(--yellow)" onclick="selectColor('#000',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#FF0000;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#FF0000',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#FF69B4;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#FF69B4',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#FF9500;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#FF9500',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#FFD700;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#FFD700',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#4CAF50;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#4CAF50',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#007AFF;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#007AFF',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#9333EA;cursor:pointer;border:2.5px solid transparent" onclick="selectColor('#9333EA',this)"></div>
+                                <div class="color-dot" style="width:24px;height:24px;border-radius:50%;background:#FFF;cursor:pointer;border:2.5px solid transparent;box-shadow:inset 0 0 0 1px var(--g300)" onclick="selectColor('#FFFFFF',this)"></div>
+                            </div>
+                            <button class="upload-btn" style="margin-top:8px" onclick="clearCanvas()">Clear Canvas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI CHAT -->
+            <div class="screen" id="screen-ai">
+                <div class="chat-container">
+                    <div class="chat-header-bar">
+                        <svg width="10" height="18" viewBox="0 0 10 18" fill="none" style="flex-shrink:0;opacity:0.5;cursor:pointer" onclick="switchTab('themes',document.querySelectorAll('.tab-item')[0])"><path d="M9 1L1 9l8 8" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="chat-avatar" id="chatAvatar" style="background:linear-gradient(135deg,#667EEA,#4338CA)">L</div>
+                        <div><div class="chat-contact-name" id="chatName">Lisa</div><div class="chat-contact-status">online</div></div>
+                        <div style="margin-left:auto;font-size:9px;color:var(--purple);font-weight:700;background:var(--purple-soft);padding:4px 10px;border-radius:20px;letter-spacing:0.3px">&#9679; AI Active</div>
+                    </div>
+                    <div class="scenario-tabs">
+                        <button class="scenario-tab active" onclick="loadScenario('reaction',this)">&#9889; Instant Reaction</button>
+                        <button class="scenario-tab" onclick="loadScenario('groupchat',this)">&#128203; Smart Summary</button>
+                        <button class="scenario-tab" onclick="loadScenario('dinner',this)">&#127843; Plan Together</button>
+                        <button class="scenario-tab" onclick="loadScenario('multilingual',this)">&#127760; Multilingual</button>
+                        <button class="scenario-tab" onclick="loadScenario('creator',this)">&#127912; Social Caption</button>
+                    </div>
+                    <div class="messages" id="messages"></div>
+                    <div class="ai-bar">
+                        <div class="ai-bar-header"><div class="ai-dot"></div><div class="ai-bar-label">AI Suggestions</div><div class="agent-indicator" id="agentIndicator"><span id="agentIcon"></span> <span id="agentName"></span></div></div>
+                        <div class="context-strip" id="contextStrip">
+                            <div class="ctx-item"><span class="ctx-label">Context:</span><span class="ctx-value" id="ctxContext">celebration</span></div>
+                            <div class="ctx-item"><span class="ctx-label">Tone:</span><span class="ctx-value" id="ctxTone">excited</span></div>
+                            <div class="ctx-item"><span class="ctx-label">Intent:</span><span class="ctx-value" id="ctxIntent">react</span></div>
+                            <span class="ctx-emojis" id="ctxEmojis"></span>
+                        </div>
+                        <div class="agent-tabs" id="agentTabs">
+                            <button class="agent-tab active" onclick="switchAgentTab('react',this)">React</button>
+                            <button class="agent-tab" onclick="switchAgentTab('reply',this)">Reply</button>
+                            <button class="agent-tab" onclick="switchAgentTab('create',this)">Create</button>
+                            <button class="agent-tab" onclick="switchAgentTab('act',this)">Act</button>
+                        </div>
+                        <div class="style-badge" id="styleBadge"><span class="style-icon">&#129520;</span><span class="style-label">Social Twin — adapts to your style</span><div class="style-tags"><span class="style-tag">lol</span><span class="style-tag">bro</span><span class="style-tag active">emoji-heavy</span></div></div>
+                        <div class="ai-thinking" id="aiThinking">AI analyzing conversation...</div>
+                        <div class="ai-chips" id="aiChips"></div>
+                    </div>
+                    <div class="keyboard">
+                        <div class="kb-row"><button class="kb-key">Q</button><button class="kb-key">W</button><button class="kb-key">E</button><button class="kb-key">R</button><button class="kb-key">T</button><button class="kb-key">Y</button><button class="kb-key">U</button><button class="kb-key">I</button><button class="kb-key">O</button><button class="kb-key">P</button></div>
+                        <div class="kb-row" style="padding:0 16px"><button class="kb-key">A</button><button class="kb-key">S</button><button class="kb-key">D</button><button class="kb-key">F</button><button class="kb-key">G</button><button class="kb-key">H</button><button class="kb-key">J</button><button class="kb-key">K</button><button class="kb-key">L</button></div>
+                        <div class="kb-row"><button class="kb-key sp" style="min-width:46px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#555" stroke-width="1.6" stroke-linecap="round"><path d="M4 10l4-5 4 5"/><line x1="4" y1="14" x2="12" y2="14"/></svg></button><button class="kb-key">Z</button><button class="kb-key">X</button><button class="kb-key">C</button><button class="kb-key">V</button><button class="kb-key">B</button><button class="kb-key">N</button><button class="kb-key">M</button><button class="kb-key sp" style="min-width:46px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#555" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7H5.5M5.5 7L8 4.5M5.5 7L8 9.5"/><path d="M3 3v10"/></svg></button></div>
+                        <div class="kb-bottom"><button class="kb-key sp" style="min-width:42px;font-size:13px;font-weight:400">123</button><button class="kb-key sp" style="min-width:38px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#555" stroke-width="1.3"><circle cx="8" cy="8" r="6.5"/><path d="M4.5 9.5a4 4 0 007 0" stroke-linecap="round"/><circle cx="6" cy="6.5" r="0.8" fill="#555" stroke="none"/><circle cx="10" cy="6.5" r="0.8" fill="#555" stroke="none"/></svg></button><button class="kb-key sp mic-key" style="min-width:38px" onclick="showVoiceModal()"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><rect x="4" y="1" width="6" height="8" rx="3" stroke="#555" stroke-width="1.4"/><path d="M2 8a5 5 0 0010 0" stroke="#555" stroke-width="1.4" stroke-linecap="round"/><path d="M7 13v2" stroke="#555" stroke-width="1.4" stroke-linecap="round"/></svg></button><button class="kb-key space">space</button><button class="kb-key sp" style="min-width:82px;font-size:13px;font-weight:500;letter-spacing:-0.2px">return</button></div>
+                    </div>
+                    <div class="home-bar"><div class="home-indicator"></div></div>
+                </div>
+            </div>
+            <!-- SETTINGS -->
+            <div class="screen" id="screen-settings">
+                <div style="padding:4px 20px 0"><h2 class="screen-title">Settings</h2></div>
+                <div class="scroll-content">
+                    <div class="vip-banner"><div class="vip-crown">&#128081;</div><div class="vip-text"><h3>Facemoji &#8250;</h3><p>VIP MEMBER</p></div></div>
+                    <div class="settings-list">
+                        <div class="settings-item"><div class="s-icon">&#9000;&#65039;</div><div class="s-label">How to Switch the Keyboard</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#127760;</div><div class="s-label">Languages</div><div class="s-value">English</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#9881;&#65039;</div><div class="s-label">Input Settings</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#128203;</div><div class="s-label">My Clipboard</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#128260;</div><div class="s-label">Swipe Dictionary</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#11088;</div><div class="s-label">Rate Us</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#128172;</div><div class="s-label">Feedback</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#8505;&#65039;</div><div class="s-label">About</div><div class="s-arrow">&#8250;</div></div>
+                        <div class="settings-item"><div class="s-icon">&#128274;</div><div class="s-label">Privacy Policy</div><div class="s-arrow">&#8250;</div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- VOICE MODAL -->
+            <div class="voice-modal" id="voiceModal">
+                <div class="voice-waves"><div class="voice-wave"></div><div class="voice-wave"></div><div class="voice-wave"></div><div class="voice-wave"></div><div class="voice-wave"></div></div>
+                <div class="voice-label">Listening...</div>
+                <div class="voice-sublabel">Voice input powered by AI</div>
+                <div class="voice-cancel" onclick="hideVoiceModal()">Cancel</div>
+            </div>
+            <!-- TAB BAR -->
+            <div class="tab-bar" id="mainTabBar">
+                <button class="tab-item active" onclick="switchTab('themes',this)"><div class="tab-icon">&#128081;</div><div class="tab-label">Themes</div></button>
+                <button class="tab-item" onclick="switchTab('fonts',this)"><div class="tab-icon"><span class="font-icon">F</span></div><div class="tab-label">Fonts</div></button>
+                <button class="tab-item" onclick="switchTab('emoji',this)"><div class="tab-icon">&#128522;</div><div class="tab-label">Emoji Art</div></button>
+                <button class="tab-item" onclick="switchTab('ai',this)"><div class="tab-icon">&#129302;</div><div class="tab-label">AI Chat</div></button>
+                <button class="tab-item" onclick="switchTab('settings',this)"><div class="tab-icon">&#9881;</div><div class="tab-label">Settings</div></button>
+            </div>
+            <div class="toast" id="toast"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2: SHOWCASE — AI KEYBOARD CONCEPT
+     ══════════════════════════════════════════════ -->
+<div class="showcase">
+    <div class="showcase-label">Core Experience</div>
+    <div class="showcase-heading">AI Chat — Context-Aware Keyboard AI</div>
+    <div class="showcase-desc">Facemoji analyzes each message to understand <strong>context</strong>, <strong>tone</strong>, and <strong>user intent</strong> — then generates smart suggestions directly from the keyboard.</div>
+
+    <!-- SCENARIO 1: Smart Reaction -->
+    <div class="showcase-row">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div style="padding:6px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--g200)">
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667EEA,#4338CA);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:10px">L</div>
+                        <div><div style="font-size:12px;font-weight:700">Lisa</div><div style="font-size:8px;color:var(--green);font-weight:600">online</div></div>
+                    </div>
+                    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-height:130px">
+                        <div style="max-width:65%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:11px;border-bottom-left-radius:3px">guess what...</div>
+                        <div style="max-width:75%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:11px;border-bottom-left-radius:3px">I just got promoted!!</div>
+                    </div>
+                    <div style="background:var(--g50);border-top:.5px solid var(--g200);padding:6px 10px">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div><span style="font-size:8px;font-weight:700;color:var(--purple);text-transform:uppercase">Facemoji AI — Reaction Agent</span></div>
+                        <div style="display:flex;gap:4px;overflow:hidden">
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">&#127881;&#127881;&#127881;</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">LETS GOOO &#128293;</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">drinks tonight??</div>
+                        </div>
+                    </div>
+                    <div style="background:#D1D3D9;padding:4px 2px 2px;font-size:10px">
+                        <div style="display:flex;justify-content:center;gap:2px;margin-bottom:3px"><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Q</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">W</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">E</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">R</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">T</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Y</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">U</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">I</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">O</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">P</div></div>
+                    </div>
+                    <div style="height:16px;background:#D1D3D9;display:flex;align-items:center;justify-content:center"><div class="sm-home"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#9889; Instant Reaction</h3>
+            <p>AI detects emotional signals and suggests quick responses.</p>
+            <div class="detail">
+                &#128293; LETS GOOO &bull; &#128514;&#128514;&#128514; &bull; &#128128; I'm dead
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENARIO 2: Long-Message Summary -->
+    <div class="showcase-row reverse">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div style="padding:6px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--g200)">
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#6D28D9);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px">&#128107;</div>
+                        <div><div style="font-size:12px;font-weight:700">Squad &#127881;</div><div style="font-size:8px;color:var(--green);font-weight:600">3 online</div></div>
+                    </div>
+                    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-height:130px">
+                        <div style="max-width:85%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:10px;border-bottom-left-radius:3px;line-height:1.4">Can we move dinner to Friday? Also invite Maya and book the karaoke room &#127908;</div>
+                    </div>
+                    <div style="background:var(--g50);border-top:.5px solid var(--g200);padding:6px 10px">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div><span style="font-size:8px;font-weight:700;color:var(--purple);text-transform:uppercase">Facemoji AI — Action Agent</span></div>
+                        <div style="display:flex;gap:4px;overflow:hidden;flex-wrap:wrap">
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:8px;font-weight:600;white-space:nowrap">&#128203; Dinner &#8594; Friday</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:8px;font-weight:600;white-space:nowrap">&#128101; Invite Maya</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">On it!</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid rgba(147,51,234,0.3);background:var(--purple-soft);font-size:9px;font-weight:600;color:var(--purple);white-space:nowrap">Book karaoke</div>
+                        </div>
+                    </div>
+                    <div style="background:#D1D3D9;padding:4px 2px 2px">
+                        <div style="display:flex;justify-content:center;gap:2px;margin-bottom:3px"><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Q</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">W</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">E</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">R</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">T</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Y</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">U</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">I</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">O</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">P</div></div>
+                    </div>
+                    <div style="height:16px;background:#D1D3D9;display:flex;align-items:center;justify-content:center"><div class="sm-home"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#128203; Smart Summary</h3>
+            <p>Long messages are summarized with suggested replies.</p>
+            <div class="detail">
+                Dinner &#8594; Friday &bull; Invite Maya &bull; <span style="color:var(--purple)">Book karaoke</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENARIO 3: Dinner Planning -->
+    <div class="showcase-row">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div style="padding:6px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--g200)">
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#BE185D);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:10px">S</div>
+                        <div><div style="font-size:12px;font-weight:700">Sarah</div><div style="font-size:8px;color:var(--green);font-weight:600">online</div></div>
+                    </div>
+                    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-height:130px">
+                        <div style="max-width:75%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:11px;border-bottom-left-radius:3px">hey are you free tonight?</div>
+                        <div style="max-width:60%;padding:7px 10px;border-radius:14px;background:var(--user-bubble);color:white;font-size:11px;align-self:flex-end;border-bottom-right-radius:3px">yeah what's up?</div>
+                        <div style="max-width:70%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:11px;border-bottom-left-radius:3px">Want sushi tonight? &#127843;</div>
+                    </div>
+                    <div style="background:var(--g50);border-top:.5px solid var(--g200);padding:6px 10px">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div><span style="font-size:8px;font-weight:700;color:var(--purple);text-transform:uppercase">Facemoji AI — Action Agent</span></div>
+                        <div style="display:flex;gap:4px;overflow:hidden;flex-wrap:wrap">
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">Yes!! &#127843;</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">&#128339; 7pm?</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">&#128339; 8pm?</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid rgba(147,51,234,0.3);background:var(--purple-soft);font-size:9px;font-weight:600;color:var(--purple);white-space:nowrap">Find sushi nearby</div>
+                        </div>
+                    </div>
+                    <div style="background:#D1D3D9;padding:4px 2px 2px">
+                        <div style="display:flex;justify-content:center;gap:2px;margin-bottom:3px"><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Q</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">W</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">E</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">R</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">T</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Y</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">U</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">I</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">O</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">P</div></div>
+                    </div>
+                    <div style="height:16px;background:#D1D3D9;display:flex;align-items:center;justify-content:center"><div class="sm-home"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#127843; Plan Together</h3>
+            <p>AI suggests actions when planning something.</p>
+            <div class="detail">
+                Sure! &bull; Where? &bull; <span style="color:var(--purple)">Find restaurants</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENARIO 4: Multilingual Messaging -->
+    <div class="showcase-row reverse">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div style="padding:6px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--g200)">
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10B981,#059669);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:10px">C</div>
+                        <div><div style="font-size:12px;font-weight:700">Carlos</div><div style="font-size:8px;color:var(--green);font-weight:600">online</div></div>
+                    </div>
+                    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-height:130px">
+                        <div style="max-width:85%;padding:7px 10px;border-radius:14px;background:var(--friend-bubble);font-size:10px;border-bottom-left-radius:3px;line-height:1.4">&iquest;Oye quieres ir al cine esta noche? Hay una pel&iacute;cula nueva que se ve incre&iacute;ble.</div>
+                    </div>
+                    <div style="background:var(--g50);border-top:.5px solid var(--g200);padding:6px 10px">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div><span style="font-size:8px;font-weight:700;color:var(--purple);text-transform:uppercase">Facemoji AI — Conversation Agent</span></div>
+                        <div style="display:flex;gap:4px;overflow:hidden;flex-wrap:wrap">
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid #10B981;background:rgba(16,185,129,0.08);font-size:8px;font-weight:600;color:#059669;white-space:nowrap">&#127760; "Want to go to the movies tonight?"</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">&iexcl;S&iacute;, vamos!</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:9px;font-weight:600;white-space:nowrap">&iquest;A qu&eacute; hora?</div>
+                        </div>
+                    </div>
+                    <div style="background:#D1D3D9;padding:4px 2px 2px">
+                        <div style="display:flex;justify-content:center;gap:2px;margin-bottom:3px"><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Q</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">W</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">E</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">R</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">T</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Y</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">U</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">I</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">O</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">P</div></div>
+                    </div>
+                    <div style="height:16px;background:#D1D3D9;display:flex;align-items:center;justify-content:center"><div class="sm-home"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#127760; Multilingual Reply</h3>
+            <p>Messages are translated with suggested responses.</p>
+            <div class="detail">
+                <span style="color:#059669">&#127760; "Want to go to the movies tonight?"</span><br>
+                &iexcl;S&iacute;, vamos! &bull; Sure! What time?
+            </div>
+        </div>
+    </div>
+
+    <!-- SCENARIO 5: Creator Mode -->
+    <div class="showcase-row">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div style="padding:6px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--g200)">
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:10px">U</div>
+                        <div><div style="font-size:12px;font-weight:700">Creator Mode</div><div style="font-size:8px;color:var(--purple);font-weight:600">AI active</div></div>
+                    </div>
+                    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-height:130px">
+                        <div style="max-width:75%;padding:7px 10px;border-radius:14px;background:var(--user-bubble);color:white;font-size:11px;align-self:flex-end;border-bottom-right-radius:3px">caption for beach photo &#127958;&#65039;</div>
+                    </div>
+                    <div style="background:var(--g50);border-top:.5px solid var(--g200);padding:6px 10px">
+                        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div><span style="font-size:8px;font-weight:700;color:var(--purple);text-transform:uppercase">Facemoji AI — Creation Agent</span></div>
+                        <div style="display:flex;gap:4px;overflow:hidden;flex-wrap:wrap">
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:8px;font-weight:600;white-space:nowrap">&#10024; Salt in the air, sand in my hair</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:8px;font-weight:600;white-space:nowrap">&#127754; Seas the day</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:var(--white);font-size:8px;font-weight:600;white-space:nowrap">&#9728;&#65039; Vitamin sea</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:#FFF9DB;font-size:8px;font-weight:600;white-space:nowrap">#beachvibes #goldenhour</div>
+                            <div style="padding:5px 8px;border-radius:10px;border:1px solid var(--g200);background:#FFF9DB;font-size:8px;font-weight:600;white-space:nowrap">&#127958;&#65039;&#127754;&#9728;&#65039;&#127774;&#127846;</div>
+                        </div>
+                    </div>
+                    <div style="background:#D1D3D9;padding:4px 2px 2px">
+                        <div style="display:flex;justify-content:center;gap:2px;margin-bottom:3px"><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Q</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">W</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">E</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">R</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">T</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">Y</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">U</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">I</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">O</div><div class="kb-key" style="min-width:22px;height:28px;font-size:10px;border-radius:3px">P</div></div>
+                    </div>
+                    <div style="height:16px;background:#D1D3D9;display:flex;align-items:center;justify-content:center"><div class="sm-home"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#127912; Social Caption</h3>
+            <p>AI generates captions, comments, and emoji combinations.</p>
+            <div class="detail">
+                &#10024; Salt in the air, sand in my hair<br>
+                #beachvibes #goldenhour &bull; &#127958;&#65039;&#127754;&#9728;&#65039;&#127774;&#127846;
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="showcase-divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3: SHOWCASE — APP SCREENS
+     ══════════════════════════════════════════════ -->
+<div class="showcase">
+    <div class="showcase-label">Full App Experience</div>
+    <div class="showcase-heading">Built on Facemoji's Existing UX</div>
+    <div class="showcase-desc">AI layered on the <strong>existing 5-tab structure</strong> — Themes, Fonts, Emoji, AI Chat, Settings.</div>
+
+    <div class="showcase-row">
+        <div class="showcase-mockups">
+            <div class="sm-phone">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div class="sm-title">&#10024; AI Agent</div>
+                    <p style="font-size:8px;color:var(--g500);padding:2px 14px 6px">React, reply, create, and act</p>
+                    <div class="sm-ai-tabs"><div class="sm-ai-tab active">Ask AI</div><div class="sm-ai-tab">Rewrite</div></div>
+                    <div class="sm-pills"><div class="sm-pill">Fun Chat</div><div class="sm-pill active">Social Media</div><div class="sm-pill">Astrology</div></div>
+                    <div class="sm-section"><div class="sm-section-bar"></div><span class="sm-section-title">Social Media</span></div>
+                    <div class="sm-card-grid">
+                        <div class="sm-card"><h4>Personal Bio</h4><p>Cool bios for socials.</p><div class="emoji">&#128100;</div></div>
+                        <div class="sm-card"><h4>Hashtags</h4><p>Hot hashtags for posts.</p><div class="emoji">#</div></div>
+                        <div class="sm-card"><h4>Video Script</h4><p>Script for your video.</p><div class="emoji">&#127909;</div></div>
+                        <div class="sm-card"><h4>Comment</h4><p>Hilarious comments.</p><div class="emoji">&#128172;</div></div>
+                        <div class="sm-card"><h4>TikTok</h4><p>Viral TikTok captions.</p><div class="emoji">&#127916;</div></div>
+                        <div class="sm-card"><h4>Instagram</h4><p>Make posts go viral!</p><div class="emoji">&#128247;</div></div>
+                    </div>
+                    <div class="sm-tab-bar">
+                        <div class="sm-tab"><div class="ic">&#128081;</div><div class="lb">Themes</div></div>
+                        <div class="sm-tab"><div class="ic"><span class="p-font-icon" style="font-size:9px;width:14px;height:14px;border-width:1.5px;border-radius:3px">F</span></div><div class="lb">Fonts</div></div>
+                        <div class="sm-tab"><div class="ic">&#128522;</div><div class="lb">Emoji</div></div>
+                        <div class="sm-tab active"><div class="ic">&#129302;</div><div class="lb">AI Chat</div></div>
+                        <div class="sm-tab"><div class="ic">&#9881;</div><div class="lb">Settings</div></div>
+                    </div>
+                    <div class="sm-home"></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#10024; AI Chat</h3>
+            <p>Captions, bios, hashtags, scripts — all from the keyboard.</p>
+            <div class="detail">
+                5 agents: Reaction &bull; Conversation &bull; Action &bull; Creation &bull; Social Twin
+            </div>
+        </div>
+    </div>
+
+    <div class="showcase-row reverse">
+        <div class="showcase-mockups" style="gap:16px">
+            <div class="sm-phone" style="width:220px">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div class="sm-title">Themes</div>
+                    <div style="margin:6px 14px;background:linear-gradient(135deg,#1A1A1A,#2D2D2D);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px"><span style="font-size:24px">&#128081;</span><div><span style="color:var(--vip-gold);font-size:10px">Facemoji</span><p style="color:#FFF;font-size:8px;font-weight:700;letter-spacing:1px">VIP MEMBER</p></div></div>
+                    <div class="sm-pills"><div class="sm-pill active">Trending</div><div class="sm-pill">Game</div><div class="sm-pill">Anime</div></div>
+                    <div class="sm-card-grid">
+                        <div class="sm-card"><div class="badge hot">Hot</div><h4>Sunset</h4><p>Warm gradient</p></div>
+                        <div class="sm-card"><div class="badge new">New</div><h4>Lavender</h4><p>Soft purple</p></div>
+                        <div class="sm-card"><div class="badge hot">Hot</div><h4>Mint</h4><p>Cool green</p></div>
+                        <div class="sm-card"><h4>Galaxy</h4><p>Space theme</p></div>
+                    </div>
+                    <div class="sm-tab-bar" style="margin-top:8px">
+                        <div class="sm-tab active"><div class="ic">&#128081;</div><div class="lb">Themes</div></div>
+                        <div class="sm-tab"><div class="ic">&#129302;</div><div class="lb">AI</div></div>
+                        <div class="sm-tab"><div class="ic">&#9881;</div><div class="lb">Settings</div></div>
+                    </div>
+                    <div class="sm-home"></div>
+                </div>
+            </div>
+            <div class="sm-phone" style="width:220px">
+                <div class="sm-status"><span>9:41</span><div class="sm-island"></div><span style="font-size:9px">&#128267;</span></div>
+                <div class="sm-inner">
+                    <div class="sm-title">Settings</div>
+                    <div style="margin:6px 14px;background:linear-gradient(135deg,#1A1A1A,#2D2D2D);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px"><span style="font-size:24px">&#128081;</span><div><span style="color:var(--vip-gold);font-size:10px">Facemoji</span><p style="color:#FFF;font-size:8px;font-weight:700;letter-spacing:1px">VIP MEMBER</p></div></div>
+                    <div class="sm-settings">
+                        <div class="sm-setting"><div class="icon">&#127760;</div><div class="label">Languages</div><div style="font-size:10px;color:var(--g500)">English</div><div class="arr">&#8250;</div></div>
+                        <div class="sm-setting"><div class="icon">&#9881;&#65039;</div><div class="label">Input Settings</div><div class="arr">&#8250;</div></div>
+                        <div class="sm-setting"><div class="icon">&#128203;</div><div class="label">My Clipboard</div><div class="arr">&#8250;</div></div>
+                        <div class="sm-setting"><div class="icon">&#11088;</div><div class="label">Rate Us</div><div class="arr">&#8250;</div></div>
+                        <div class="sm-setting"><div class="icon">&#128172;</div><div class="label">Feedback</div><div class="arr">&#8250;</div></div>
+                        <div class="sm-setting"><div class="icon">&#128274;</div><div class="label">Privacy Policy</div><div class="arr">&#8250;</div></div>
+                    </div>
+                    <div class="sm-tab-bar" style="margin-top:8px">
+                        <div class="sm-tab"><div class="ic">&#128081;</div><div class="lb">Themes</div></div>
+                        <div class="sm-tab"><div class="ic">&#129302;</div><div class="lb">AI</div></div>
+                        <div class="sm-tab active"><div class="ic">&#9881;</div><div class="lb">Settings</div></div>
+                    </div>
+                    <div class="sm-home"></div>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-text">
+            <h3>&#128081; Themes & Settings</h3>
+            <p>1500+ themes, VIP membership, fonts, emoji art — <strong>fully preserved</strong>.</p>
+            <div class="detail">
+                The AI system is <strong>additive</strong> — it enhances without replacing what users already love.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+    <div class="footer-heading">Why AI Belongs in the Keyboard</div>
+    <div class="footer-body">
+        <p>Messaging happens dozens of times a day.</p>
+        <p>Facemoji AI turns conversations into instant suggestions and actions.</p>
+        <p>Instead of typing, users can simply tap.</p>
+        <p><strong>The keyboard becomes an intelligent communication layer.</strong></p>
+    </div>
+    <div class="footer-stat">550M+ downloads &bull; 170+ countries</div>
+</div>
+
+<script>
+// ── Interactive Phone Logic ──
+let chatInitialized=false,currentScenario='reaction',hasFollowedUp=false;
+
+function switchTab(tab,el){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    document.getElementById('screen-'+tab).classList.add('active');
+    el.classList.add('active');
+    document.getElementById('mainTabBar').style.display='flex';
+    if(tab==='ai'&&!chatInitialized){loadScenario('reaction',document.querySelector('.scenario-tab.active'));chatInitialized=true}
+    const sc=document.getElementById('screen-'+tab).querySelector('.scroll-content');if(sc)sc.scrollTop=0;
+}
+function switchPill(btn){btn.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');showToast(btn.textContent)}
+function switchEmojiTab(btn,tab){document.querySelectorAll('#screen-emoji .ai-header-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('emoji-fe').style.display=tab==='fe'?'block':'none';document.getElementById('emoji-ta').style.display=tab==='ta'?'block':'none'}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+const scenarios={
+    reaction:{contact:'Lisa',avatar:'L',color:'#667EEA',
+        context:{topic:'celebration',tone:'excited',intent:'react',emojis:'\u{1F525}\u{1F389}\u{1F64C}'},
+        personalized:true,
+        history:[{from:'friend',text:"guess what..."},{from:'friend',text:"I just got promoted!!"}],
+        agentSuggestions:{
+            react:[{text:"\u{1F389}\u{1F389}\u{1F389}",type:'reaction'},{text:"LETS GOOO \u{1F525}",type:'reaction'},{text:"\u{1F64C}\u{1F64C}\u{1F64C}",type:'reaction'}],
+            reply:[{text:"drinks tonight??",type:'reply'},{text:"OMG congrats!!",type:'reply'},{text:"you deserve it!!",type:'reply'}],
+            create:[{text:"Send celebration GIF",type:'action'},{text:"Create party sticker",type:'action'}],
+            act:[{text:"Find nearby bars",type:'action'},{text:"Plan celebration",type:'action'}]
+        },
+        suggestions:[{text:"\u{1F389}\u{1F389}\u{1F389}",type:'reaction'},{text:"LETS GOOO \u{1F525}",type:'reaction'},{text:"drinks tonight??",type:'reply'},{text:"OMG congrats!!",type:'reply'},{text:"Send celebration GIF",type:'action'}],
+        agent:'Reaction Agent',agentIcon:'\u{1F525}',
+        followUp:{friend:"haha thanks!! drinks sounds perfect \u{1F37E}",suggestions:[{text:"\u{1F64C} I'm so proud of you",type:'reply'},{text:"Where should we go?",type:'reply'},{text:"Find nearby bars",type:'action'}],agent:'Action Agent',agentIcon:'\u{26A1}'}},
+    groupchat:{contact:'Squad \u{1F389}',avatar:'\u{1F46B}',color:'#8B5CF6',
+        context:{topic:'work message',tone:'neutral',intent:'summarize',emojis:'\u{1F4CB}\u{1F4E8}\u{2705}'},
+        personalized:true,
+        history:[{from:'friend',text:"Can we move dinner to Friday? Also invite Maya and book the karaoke room \u{1F3A4}"}],
+        agentSuggestions:{
+            react:[{text:"\u{1F64C}\u{1F64C}\u{1F64C}",type:'reaction'},{text:"\u{1F525} karaoke lets go",type:'reaction'},{text:"\u{1F389}",type:'reaction'}],
+            reply:[{text:"Friday works!",type:'reply'},{text:"I'll text Maya now",type:'reply'},{text:"On it!",type:'reply'}],
+            create:[{text:"Karaoke night sticker",type:'action'},{text:"Group invite card",type:'action'}],
+            act:[{text:"\u{1F4CB} Dinner \u{2192} Friday",type:'reaction'},{text:"Text Maya",type:'action'},{text:"Book karaoke room",type:'action'}]
+        },
+        suggestions:[{text:"\u{1F4CB} Dinner \u{2192} Friday",type:'reaction'},{text:"\u{1F465} Invite Maya",type:'reaction'},{text:"On it!",type:'reply'},{text:"Friday works!",type:'reply'},{text:"Book karaoke room",type:'action'},{text:"Text Maya",type:'action'}],
+        agent:'Action Agent',agentIcon:'\u{26A1}',
+        followUp:{friend:"Perfect! Maya says she's in \u{1F64C} book for 8pm?",suggestions:[{text:"Done! See everyone at 8 \u{1F389}",type:'reply'},{text:"\u{1F525}\u{1F525}\u{1F525}",type:'reaction'},{text:"Make reservation",type:'action'}],agent:'Action Agent',agentIcon:'\u{26A1}'}},
+    dinner:{contact:'Sarah',avatar:'S',color:'#EC4899',
+        context:{topic:'social plan',tone:'casual',intent:'decide',emojis:'\u{1F363}\u{1F60D}\u{1F44D}'},
+        personalized:true,
+        history:[{from:'friend',text:"hey are you free tonight?"},{from:'user',text:"yeah what's up?"},{from:'friend',text:"Want sushi tonight?"}],
+        agentSuggestions:{
+            react:[{text:"\u{1F363}\u{1F363}\u{1F363}",type:'reaction'},{text:"\u{1F60D} yesss",type:'reaction'},{text:"\u{1F64C}",type:'reaction'}],
+            reply:[{text:"Yes!! \u{1F363}",type:'reply'},{text:"Where were you thinking?",type:'reply'},{text:"omg down",type:'reply'}],
+            create:[{text:"Generate foodie meme",type:'action'},{text:"Sushi emoji combo",type:'action'}],
+            act:[{text:"Find sushi nearby",type:'action'},{text:"\u{1F553} 7pm?",type:'reply'},{text:"\u{1F553} 8pm?",type:'reply'},{text:"Book Uber",type:'action'}]
+        },
+        suggestions:[{text:"Yes!! \u{1F363}",type:'reply'},{text:"Where were you thinking?",type:'reply'},{text:"\u{1F553} 7pm?",type:'reply'},{text:"\u{1F553} 8pm?",type:'reply'},{text:"Find sushi nearby",type:'action'},{text:"Book Uber",type:'action'}],
+        agent:'Action Agent',agentIcon:'\u{26A1}',
+        followUp:{friend:"How about that new place on 5th? 7:30?",suggestions:[{text:"Perfect! See you there",type:'reply'},{text:"Omg yes I've been wanting to try it",type:'reply'},{text:"Make reservation",type:'action'}],agent:'Action Agent',agentIcon:'\u{26A1}'}},
+    multilingual:{contact:'Carlos',avatar:'C',color:'#10B981',
+        context:{topic:'translation',tone:'friendly',intent:'reply',emojis:'\u{1F310}\u{1F3AC}\u{1F37F}'},
+        personalized:false,
+        history:[{from:'friend',text:"\u{00BF}Oye quieres ir al cine esta noche? Hay una pel\u{00ED}cula nueva que se ve incre\u{00ED}ble."}],
+        agentSuggestions:{
+            react:[{text:"\u{1F3AC}\u{1F37F}",type:'reaction'},{text:"\u{1F60D}",type:'reaction'}],
+            reply:[{text:"\u{00A1}S\u{00ED}, vamos!",type:'reply'},{text:"\u{00BF}A qu\u{00E9} hora?",type:'reply'},{text:"Sure! What time?",type:'reply'}],
+            create:[{text:"Reply in Spanish",type:'action'},{text:"Movie night sticker",type:'action'}],
+            act:[{text:"\u{1F310} Translate message",type:'action'},{text:"Find showtimes",type:'action'}]
+        },
+        suggestions:[{text:"\u{1F310} \"Want to go to the movies tonight? Amazing new movie.\"",type:'reaction'},{text:"\u{00A1}S\u{00ED}, vamos!",type:'reply'},{text:"\u{00BF}A qu\u{00E9} hora?",type:'reply'},{text:"Sure! What time?",type:'reply'},{text:"Find showtimes",type:'action'}],
+        agent:'Conversation Agent',agentIcon:'\u{1F310}',
+        followUp:{friend:"\u{00A1}Genial! La funci\u{00F3}n es a las 8. \u{00BF}Te recojo?",suggestions:[{text:"\u{1F310} \"Great! Show at 8. Pick you up?\"",type:'reaction'},{text:"\u{00A1}S\u{00ED}, perfecto!",type:'reply'},{text:"Yes, pick me up!",type:'reply'}],agent:'Conversation Agent',agentIcon:'\u{1F310}'}},
+    creator:{contact:'You',avatar:'U',color:'#F59E0B',
+        context:{topic:'social content',tone:'playful',intent:'create',emojis:'\u{2728}\u{1F3D6}\u{FE0F}\u{1F30A}'},
+        personalized:false,
+        history:[{from:'user',text:"caption for beach photo \u{1F3D6}\u{FE0F}"}],
+        agentSuggestions:{
+            react:[{text:"\u{1F3D6}\u{FE0F}\u{1F30A}\u{2600}\u{FE0F}\u{1F31E}\u{1F366}",type:'reaction'}],
+            reply:[{text:"\u{2728} Salt in the air, sand in my hair",type:'reply'},{text:"\u{1F30A} Seas the day",type:'reply'},{text:"\u{2600}\u{FE0F} Vitamin sea is the best vitamin",type:'reply'}],
+            create:[{text:"#beachvibes #goldenhour #oceanlife",type:'reaction'},{text:"Generate more captions",type:'action'},{text:"Reel caption + hashtags",type:'action'}],
+            act:[{text:"Copy to clipboard",type:'action'},{text:"Post to Instagram",type:'action'}]
+        },
+        suggestions:[{text:"\u{2728} Salt in the air, sand in my hair",type:'reply'},{text:"\u{1F30A} Seas the day",type:'reply'},{text:"\u{2600}\u{FE0F} Vitamin sea is the best vitamin",type:'reply'},{text:"#beachvibes #goldenhour #oceanlife",type:'reaction'},{text:"\u{1F3D6}\u{FE0F}\u{1F30A}\u{2600}\u{FE0F}\u{1F31E}\u{1F366}",type:'reaction'}],
+        agent:'Creation Agent',agentIcon:'\u{1F3A8}',
+        followUp:{friend:"",suggestions:[{text:"\u{1F31F} Life's a beach, enjoy the waves",type:'reply'},{text:"\u{1F305} Chasing sunsets & good vibes",type:'reply'},{text:"#sunset #beachlife #paradise",type:'reaction'},{text:"Generate more captions",type:'action'}],agent:'Creation Agent',agentIcon:'\u{1F3A8}'}}
+};
+
+let currentAgentTab='react';
+function loadScenario(key,tabEl){
+    document.querySelectorAll('.scenario-tab').forEach(t=>t.classList.remove('active'));if(tabEl)tabEl.classList.add('active');
+    currentScenario=key;hasFollowedUp=false;currentAgentTab='react';const s=scenarios[key];
+    document.getElementById('chatName').textContent=s.contact;document.getElementById('chatAvatar').textContent=s.avatar;
+    document.getElementById('chatAvatar').style.background='linear-gradient(135deg,'+s.color+','+darken(s.color)+')';
+    const msgBox=document.getElementById('messages');msgBox.innerHTML='';
+    // Reset agent tabs to first
+    document.querySelectorAll('.agent-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+    // Hide context/tabs/style during thinking
+    document.getElementById('contextStrip').classList.remove('show');
+    document.getElementById('agentTabs').classList.remove('show');
+    document.getElementById('styleBadge').classList.remove('show');
+    s.history.forEach((m,i)=>{setTimeout(()=>{const d=document.createElement('div');d.className='msg '+(m.from==='user'?'user':'friend');d.textContent=m.text;msgBox.appendChild(d);msgBox.scrollTop=msgBox.scrollHeight},i*200)});
+    const chips=document.getElementById('aiChips'),thinking=document.getElementById('aiThinking');
+    chips.innerHTML='';document.getElementById('agentIndicator').classList.remove('show');
+    const msgDelay=s.history.length*200;
+    // STEP 1: "AI analyzing conversation..." appears after messages
+    setTimeout(()=>{thinking.classList.add('show')},msgDelay+300);
+    // STEP 2: Context/Tone/Intent appears (thinking stays visible)
+    setTimeout(()=>{
+        if(s.context){
+            document.getElementById('ctxContext').textContent=s.context.topic;
+            document.getElementById('ctxTone').textContent=s.context.tone;
+            document.getElementById('ctxIntent').textContent=s.context.intent;
+            document.getElementById('ctxEmojis').textContent=s.context.emojis||'';
+            document.getElementById('contextStrip').classList.add('show');
+        }
+    },msgDelay+900);
+    // STEP 3: Thinking disappears, suggestions + tabs appear
+    setTimeout(()=>{
+        thinking.classList.remove('show');
+        document.getElementById('agentTabs').classList.add('show');
+        document.getElementById('styleBadge').classList.toggle('show',!!s.personalized);
+        showSuggestions(s.suggestions,s.agent,s.agentIcon);
+    },msgDelay+1500);
+}
+function switchAgentTab(tab,el){
+    document.querySelectorAll('.agent-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+    currentAgentTab=tab;const s=scenarios[currentScenario];
+    if(s.agentSuggestions&&s.agentSuggestions[tab]){
+        const agentMap={react:'Reaction Agent',reply:'Conversation Agent',create:'Creation Agent',act:'Action Agent'};
+        const iconMap={react:'\u{1F525}',reply:'\u{1F4AC}',create:'\u{1F3A8}',act:'\u{26A1}'};
+        showSuggestions(s.agentSuggestions[tab],agentMap[tab],iconMap[tab]);
+    }
+}
+function showSuggestions(suggestions,agent,icon){
+    const chips=document.getElementById('aiChips'),ind=document.getElementById('agentIndicator');
+    chips.innerHTML='';ind.classList.add('show');document.getElementById('agentIcon').textContent=icon;document.getElementById('agentName').textContent=agent;
+    suggestions.forEach(s=>{const btn=document.createElement('button');btn.className='ai-chip'+(s.type==='action'?' action':'');btn.textContent=s.text;btn.onclick=()=>handleChipTap(s);chips.appendChild(btn)});
+}
+function handleChipTap(suggestion){
+    const msgBox=document.getElementById('messages');if(suggestion.type==='action'){showToast(suggestion.text);return}
+    const d=document.createElement('div');d.className='msg user';d.textContent=suggestion.text;msgBox.appendChild(d);msgBox.scrollTop=msgBox.scrollHeight;
+    document.getElementById('aiChips').innerHTML='';document.getElementById('agentIndicator').classList.remove('show');
+    const s=scenarios[currentScenario];
+    if(!hasFollowedUp&&s.followUp){
+        hasFollowedUp=true;
+        if(s.followUp.friend){
+            setTimeout(()=>{const t=document.createElement('div');t.className='typing-indicator show';t.id='typingBubble';t.innerHTML='<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';msgBox.appendChild(t);msgBox.scrollTop=msgBox.scrollHeight},600);
+            setTimeout(()=>{const tb=document.getElementById('typingBubble');if(tb)tb.remove();const r=document.createElement('div');r.className='msg friend';r.textContent=s.followUp.friend;msgBox.appendChild(r);msgBox.scrollTop=msgBox.scrollHeight;document.getElementById('aiThinking').classList.add('show');setTimeout(()=>{document.getElementById('aiThinking').classList.remove('show');showSuggestions(s.followUp.suggestions,s.followUp.agent,s.followUp.agentIcon)},700)},1800);
+        }else{
+            setTimeout(()=>{document.getElementById('aiThinking').classList.add('show');setTimeout(()=>{document.getElementById('aiThinking').classList.remove('show');showSuggestions(s.followUp.suggestions,s.followUp.agent,s.followUp.agentIcon)},700)},400);
+        }
+    }else{setTimeout(()=>{document.getElementById('aiThinking').classList.add('show');setTimeout(()=>{document.getElementById('aiThinking').classList.remove('show');showSuggestions(s.suggestions,s.agent,s.agentIcon)},500)},400)}
+}
+function darken(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return'rgb('+Math.max(r-60,0)+','+Math.max(g-40,0)+','+Math.min(b+30,255)+')'}
+function updateClock(){const n=new Date();document.getElementById('clockTime').textContent=n.getHours()+':'+String(n.getMinutes()).padStart(2,'0')}
+updateClock();setInterval(updateClock,30000);
+function showVoiceModal(){document.getElementById('voiceModal').classList.add('show');setTimeout(()=>{hideVoiceModal();showToast('\u{1F3A4} "drinks tonight sounds great"');const msgBox=document.getElementById('messages');const d=document.createElement('div');d.className='msg user';d.textContent='drinks tonight sounds great!';msgBox.appendChild(d);msgBox.scrollTop=msgBox.scrollHeight},2500)}
+function hideVoiceModal(){document.getElementById('voiceModal').classList.remove('show')}
+
+// ── Pixel Art Canvas ──
+let selectedColor='#000',isDrawing=false;
+(function initCanvas(){
+    const canvas=document.getElementById('pixelCanvas');if(!canvas)return;
+    for(let i=0;i<256;i++){
+        const cell=document.createElement('div');
+        cell.style.cssText='background:var(--g100);aspect-ratio:1;cursor:crosshair;transition:background .05s';
+        cell.addEventListener('pointerdown',function(e){e.preventDefault();isDrawing=true;this.style.background=selectedColor});
+        cell.addEventListener('pointerenter',function(){if(isDrawing)this.style.background=selectedColor});
+        canvas.appendChild(cell);
+    }
+    document.addEventListener('pointerup',function(){isDrawing=false});
+})();
+function selectColor(c,el){
+    selectedColor=c;
+    document.querySelectorAll('.color-dot').forEach(d=>d.style.borderColor='transparent');
+    el.style.borderColor='var(--yellow)';
+}
+function clearCanvas(){
+    document.querySelectorAll('#pixelCanvas div').forEach(c=>c.style.background='var(--g100)');
+    showToast('Canvas cleared');
+}
+</script>
+</body>
+</html>

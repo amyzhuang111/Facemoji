@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facemoji AI Agent | Amy Zhuang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FFFFFF;
+            --bg-warm: #F7F7F5;
+            --text: #1A1A1A;
+            --text-body: #555;
+            --text-muted: #999;
+            --accent: #4F46E5;
+            --accent-soft: #EEF2FF;
+            --border: #E8E8E4;
+            --narrow: 720px;
+            --wide: 1080px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px;-webkit-font-smoothing:antialiased}
+
+        /* ---- PROGRESS ---- */
+        .progress-track{position:fixed;top:0;left:0;width:100%;height:3px;z-index:200}
+        .progress-fill{height:100%;background:var(--accent);width:0%;transition:width .12s ease}
+
+        /* ---- BACK ---- */
+        .back-link{position:fixed;top:28px;left:28px;z-index:100;font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;letter-spacing:.5px;transition:color .2s}
+        .back-link:hover{color:var(--text)}
+
+        /* ---- CONTAINERS ---- */
+        .narrow{max-width:var(--narrow);margin:0 auto;padding:0 32px}
+        .wide{max-width:var(--wide);margin:0 auto;padding:0 32px}
+        .mid{max-width:880px;margin:0 auto;padding:0 32px}
+
+        /* ---- HERO ---- */
+        .hero{padding:120px 32px 48px;max-width:var(--narrow);margin:0 auto}
+        .hero-eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-bottom:20px}
+        .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(34px,5vw,50px);font-weight:400;line-height:1.15;color:var(--text);margin-bottom:16px}
+        .hero-sub{font-size:17px;color:var(--text-body);line-height:1.7;max-width:560px;margin-bottom:40px}
+
+        /* ---- META ---- */
+        .meta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-top:28px;border-top:1px solid var(--border)}
+        .meta-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:4px}
+        .meta-value{font-size:13px;color:var(--text-body);line-height:1.5}
+
+        /* ---- HERO SHOWCASE ---- */
+        .hero-showcase{max-width:var(--wide);margin:24px auto 0;padding:0 32px}
+        .hero-showcase-inner{background:var(--bg-warm);border-radius:16px;padding:28px 32px;display:flex;gap:32px;align-items:center;justify-content:center}
+        .hero-stat-block{text-align:center;flex:1}
+        .hero-stat-value{font-family:'DM Serif Display',serif;font-size:40px;color:var(--text);line-height:1.1}
+        .hero-stat-label{font-size:12px;color:var(--text-muted);margin-top:6px;letter-spacing:.3px}
+
+        /* ---- PHONE GALLERY ---- */
+        .phone-gallery{max-width:var(--wide);margin:0 auto;padding:0 32px}
+        .phone-gallery-inner{display:flex;gap:16px;justify-content:center;align-items:flex-start;overflow-x:auto;padding:16px 0;-webkit-overflow-scrolling:touch}
+        .phone-gallery-inner img{width:160px;border-radius:14px;box-shadow:0 6px 28px rgba(0,0,0,.08);flex-shrink:0;transition:transform .3s}
+        .phone-gallery-inner img:hover{transform:translateY(-4px)}
+        .gallery-caption{text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px;font-style:italic}
+
+        /* ---- SECTIONS ---- */
+        .sec{padding:56px 0}
+        .sec--alt{background:var(--bg-warm)}
+        .sec-num{font-family:'DM Serif Display',serif;font-size:48px;color:#EDEDEA;line-height:1;margin-bottom:2px}
+        .sec-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
+        .sec-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,3vw,32px);font-weight:400;color:var(--text);line-height:1.25;margin-bottom:12px}
+
+        /* ---- BODY ---- */
+        .body{font-size:14px;color:var(--text-body);line-height:1.7;margin-bottom:16px}
+        .body strong{color:var(--text);font-weight:600}
+        .body-sm{font-size:13px;color:var(--text-body);line-height:1.65;margin-bottom:12px}
+
+        /* ---- DIVIDER ---- */
+        .divider{height:1px;background:var(--border);max-width:var(--narrow);margin:0 auto}
+
+        /* ---- LEFT-RIGHT LAYOUT ---- */
+        .lr{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:var(--wide);margin:0 auto;padding:0 32px}
+        .lr--reverse{direction:rtl}
+        .lr--reverse>*{direction:ltr}
+        .lr-text{}
+        .lr-visual img{width:100%;border-radius:16px;box-shadow:0 8px 36px rgba(0,0,0,.06)}
+        .lr-visual--plain img{box-shadow:none;border:1px solid var(--border)}
+
+        /* ---- STATS ROW ---- */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}
+        .stat-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px 12px;text-align:center}
+        .stat-value{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);line-height:1.1}
+        .stat-label{font-size:10px;color:var(--text-muted);margin-top:4px;line-height:1.3}
+
+        /* ---- TL;DR ---- */
+        .tldr{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;font-size:13px;line-height:1.65;color:var(--text)}
+        .tldr-pre{font-weight:700;color:var(--accent);margin-right:4px}
+
+        /* ---- TAGS ---- */
+        .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+        .tag{background:var(--bg-warm);border:1px solid var(--border);border-radius:16px;padding:4px 12px;font-size:12px;color:var(--text-body);font-weight:500}
+
+        /* ---- BULLET LIST ---- */
+        .bl{list-style:none;padding:0;margin-bottom:16px}
+        .bl li{padding:4px 0 4px 18px;position:relative;color:var(--text-body);font-size:13px;line-height:1.6}
+        .bl li::before{content:'';position:absolute;left:0;top:12px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+        /* ---- PAIN GRID ---- */
+        .pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+        .pain-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px}
+        .pain-card-icon{font-size:16px;margin-bottom:6px}
+        .pain-card h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+        .pain-card p{font-size:12px;color:var(--text-body);line-height:1.55}
+
+        /* ---- BAR CHART ---- */
+        .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+        .bar-label{font-size:13px;color:var(--text-body);width:60px;text-align:right;flex-shrink:0;font-weight:500}
+        .bar-track{flex:1;height:32px;background:#F0F0EC;border-radius:8px;overflow:hidden}
+        .bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:12px;font-size:12px;font-weight:600;color:#fff;transition:width 1s cubic-bezier(.22,1,.36,1)}
+        .bar-fill--1{background:var(--accent)}
+        .bar-fill--2{background:#818CF8}
+        .bar-fill--3{background:#C7D2FE;color:var(--text-body)}
+        .bar-fill--4{background:#E0E7FF;color:var(--text-muted)}
+        .bar-pct{font-size:12px;color:var(--text-muted);width:42px;flex-shrink:0;font-weight:600}
+
+        /* ---- COMP CARDS ---- */
+        .comp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:32px}
+        .comp-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px 16px;transition:box-shadow .2s}
+        .comp-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.04)}
+        .comp-tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:8px}
+        .comp-card h3{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3}
+        .comp-card p{font-size:12px;color:var(--text-body);line-height:1.55}
+
+        /* ---- CHART WRAPPER ---- */
+        .chart-wrap{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:24px 20px 16px;margin:20px 0}
+        .chart-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:24px;text-align:center}
+
+        /* ---- ASSUMPTION ---- */
+        .assumption{padding:16px 0;border-bottom:1px solid var(--border)}
+        .assumption:last-child{border-bottom:none}
+        .assumption-num{font-family:'DM Serif Display',serif;font-size:18px;color:#E0E0DC;margin-bottom:2px}
+        .assumption-old{font-size:13px;color:var(--text-muted);text-decoration:line-through;line-height:1.6;margin-bottom:2px}
+        .assumption-new{font-size:13px;color:var(--text);font-weight:500;line-height:1.6}
+
+        /* ---- VISION GRID ---- */
+        .vision-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:20px 0}
+        .vision-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px 18px;transition:box-shadow .2s}
+        .vision-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.04)}
+        .vision-icon{font-size:20px;margin-bottom:8px}
+        .vision-card h3{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+        .vision-card p{font-size:12px;color:var(--text-body);line-height:1.55}
+
+        /* ---- CHAT ---- */
+        .scenarios-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin:28px 0 14px}
+        .scenarios-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+        .scenario{margin-bottom:0}
+        .scenario-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px}
+        .chat-window{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+        .chat-bubble{padding:8px 12px;border-radius:14px;font-size:12px;max-width:90%;line-height:1.4}
+        .chat-in{background:#F0F0EC;color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+        .chat-hint{font-size:10px;color:var(--text-muted);padding:1px 0;font-weight:500}
+        .ai-chips{display:flex;gap:4px;flex-wrap:wrap;padding:1px 0}
+        .ai-chip{background:var(--accent-soft);border:1px solid #C7D2FE;border-radius:16px;padding:4px 10px;font-size:11px;color:var(--accent);font-weight:500;transition:background .15s}
+        .ai-chip:hover{background:#DDD6FE}
+
+        /* ---- CTA ---- */
+        .cta{text-align:center;padding-top:28px}
+        .demo-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#fff;text-decoration:none;font-size:14px;font-weight:600;border-radius:100px;transition:all .2s;letter-spacing:.3px}
+        .demo-btn:hover{background:#4338CA;transform:translateY(-1px);box-shadow:0 4px 16px rgba(79,70,229,.3)}
+
+        /* ---- SUB HEADER ---- */
+        .sub{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;margin-top:6px}
+        .sub-sm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;margin-top:16px}
+
+        /* ---- MONO PATH ---- */
+        .mono{margin-bottom:20px;padding-left:16px;border-left:2px solid var(--border)}
+        .mono-label{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:2px}
+        .mono p{font-size:14px;color:var(--text-body);line-height:1.7}
+
+        /* ---- CASE STUDY CARD ---- */
+        .case-card{background:var(--bg-warm);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:10px}
+        .case-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .case-card-logo{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--bg);border:1px solid var(--border)}
+        .case-card h4{font-size:14px;font-weight:600;color:var(--text)}
+        .case-card p{font-size:12px;color:var(--text-body);line-height:1.6;margin-bottom:6px}
+        .case-card .case-stat{display:inline-block;background:var(--accent-soft);padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;color:var(--accent);margin-right:4px;margin-bottom:4px}
+
+        /* ---- DONUT/RING CHART ---- */
+        .donut-row{display:flex;gap:24px;margin:24px 0;flex-wrap:wrap}
+        .donut-item{text-align:center;flex:1;min-width:100px}
+        .donut-item svg{width:80px;height:80px}
+        .donut-label{font-size:12px;color:var(--text-body);margin-top:6px;line-height:1.3}
+
+        /* ---- GTM TIMELINE ---- */
+        .timeline{margin:16px 0;padding-left:20px;border-left:2px solid var(--accent);position:relative}
+        .timeline::before{content:'';position:absolute;top:0;left:-5px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+        .timeline-item{margin-bottom:14px;position:relative}
+        .timeline-item::before{content:'';position:absolute;top:6px;left:-25px;width:8px;height:8px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+        .timeline-phase{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:1px}
+        .timeline-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+        .timeline-desc{font-size:12px;color:var(--text-body);line-height:1.55}
+
+        /* ---- CHANNEL GRID ---- */
+        .channel-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+        .channel-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+        .channel-icon{font-size:22px;margin-bottom:4px}
+        .channel-card h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+        .channel-card p{font-size:11px;color:var(--text-muted);line-height:1.4}
+        .channel-stat{font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);margin-top:4px}
+
+        /* ---- ARCH LIST ---- */
+        .arch-list{list-style:none;padding:0}
+        .arch-item{display:flex;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text-body);line-height:1.6}
+        .arch-item:last-child{border-bottom:none}
+        .arch-num{font-family:'DM Serif Display',serif;font-size:18px;color:#D4D4CF;flex-shrink:0;width:28px}
+        .arch-label{font-weight:600;color:var(--text)}
+
+        /* ---- NOTE ---- */
+        .note{font-size:13px;color:var(--text-muted);font-style:italic;margin-top:12px}
+
+        /* ---- GAP CALLOUT ---- */
+        .gap-callout{text-align:center;padding:24px 24px;background:var(--accent-soft);border-radius:16px;margin-top:20px}
+        .gap-callout p{font-family:'DM Serif Display',serif;font-size:17px;color:var(--accent);line-height:1.45;max-width:520px;margin:0 auto}
+
+        /* ---- FULL IMAGE ---- */
+        .full-img{max-width:var(--wide);margin:24px auto;padding:0 32px}
+        .full-img img{width:100%;border-radius:16px;box-shadow:0 8px 36px rgba(0,0,0,.06)}
+        .full-img.bordered img{box-shadow:none;border:1px solid var(--border)}
+
+        /* ---- FOOTER ---- */
+        .case-footer{padding:40px 0 28px;text-align:center}
+        .case-footer p{font-size:13px;color:var(--text-muted);letter-spacing:.5px}
+
+        /* ---- RESPONSIVE ---- */
+        @media(max-width:768px){
+            .hero{padding:100px 20px 48px}
+            .meta-row{grid-template-columns:1fr;gap:16px}
+            .comp-grid,.channel-grid,.scenarios-row{grid-template-columns:1fr}
+            .pain-grid{grid-template-columns:1fr}
+            .vision-grid{grid-template-columns:1fr 1fr}
+            .stats-row{grid-template-columns:1fr 1fr}
+            .sec{padding:64px 0}
+            .narrow,.wide,.mid{padding:0 20px}
+            .hero-showcase{padding:0 20px}
+            .hero-showcase-inner{padding:36px 20px;flex-direction:column;gap:24px}
+            .hero-stat-value{font-size:36px}
+            .back-link{top:16px;left:16px}
+            .sec-num{font-size:40px}
+            .chart-wrap{padding:20px 12px 12px}
+            .phone-gallery-inner img{width:150px}
+            .phone-gallery{padding:0 20px}
+            .lr{grid-template-columns:1fr;gap:28px}
+            .lr--reverse{direction:ltr}
+            .full-img{padding:0 20px}
+            .donut-row{justify-content:center}
+        }
+        @media(max-width:480px){
+            .hero h1{font-size:28px}
+            .stats-row{grid-template-columns:1fr}
+            .hero-showcase-inner{flex-direction:column}
+            .phone-gallery-inner img{width:140px}
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <a href="/" class="back-link">&larr; Back</a>
+
+    <!-- ====================== HERO ====================== -->
+    <header class="hero">
+        <div class="hero-eyebrow">Product Proposal</div>
+        <h1>Transforming Facemoji Keyboard into an AI&nbsp;Agent</h1>
+        <p class="hero-sub">From emoji keyboard to AI copilot &mdash; one tap away, inside every app.</p>
+        <div class="meta-row">
+            <div><div class="meta-label">Context</div><div class="meta-value">Facemoji is a top expression keyboard exploring the next evolution of AI experiences.</div></div>
+            <div><div class="meta-label">Goal</div><div class="meta-value">Rethink the keyboard as an AI Agent that helps users accomplish real tasks across apps.</div></div>
+            <div><div class="meta-label">Role</div><div class="meta-value">Product Strategy &amp; Vision</div></div>
+        </div>
+    </header>
+
+    <div class="hero-showcase">
+        <div class="hero-showcase-inner">
+            <div class="hero-stat-block"><div class="hero-stat-value">550M+</div><div class="hero-stat-label">Global Downloads</div></div>
+            <div class="hero-stat-block"><div class="hero-stat-value">170+</div><div class="hero-stat-label">Countries &amp; Regions</div></div>
+            <div class="hero-stat-block"><div class="hero-stat-value">#9</div><div class="hero-stat-label">a16z Top 50 GenAI Apps</div></div>
+        </div>
+    </div>
+
+    <!-- Hero phone gallery with labels -->
+    <div class="phone-gallery" style="margin-top:28px;">
+        <div class="phone-gallery-inner">
+            <div style="flex-shrink:0;text-align:center">
+                <img src="/FaceEmoji/41573e3a019daa0937e5375c0f3d979.jpg" alt="Themes">
+                <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Themes</p>
+                <p style="font-size:11px;color:var(--text-muted)">1,500+ keyboard themes</p>
+            </div>
+            <div style="flex-shrink:0;text-align:center">
+                <img src="/FaceEmoji/3c3a7c9b35992d4538d2dbd9cbacbfb.jpg" alt="Fonts">
+                <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Fonts</p>
+                <p style="font-size:11px;color:var(--text-muted)">200+ text styles</p>
+            </div>
+            <div style="flex-shrink:0;text-align:center">
+                <img src="/FaceEmoji/eee000c58557f33cbde0301ccc8ad07.jpg" alt="Text Art">
+                <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Text Art</p>
+                <p style="font-size:11px;color:var(--text-muted)">Pixel art &amp; emoji art</p>
+            </div>
+            <div style="flex-shrink:0;text-align:center">
+                <img src="/FaceEmoji/06e0e14cfb889bdc65fcc7c6e60601f.jpg" alt="Face Emoji">
+                <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Face Emoji</p>
+                <p style="font-size:11px;color:var(--text-muted)">AI-generated stickers</p>
+            </div>
+            <div style="flex-shrink:0;text-align:center">
+                <img src="/FaceEmoji/fa03767e80f65394261140afbe4e4d7.jpg" alt="AI Chat">
+                <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">AI Chat</p>
+                <p style="font-size:11px;color:var(--text-muted)">Rewrite &amp; social tools</p>
+            </div>
+        </div>
+        <p class="gallery-caption">Facemoji's current product across five core tabs</p>
+    </div>
+
+    <!-- ====================== 01 CONTEXT ====================== -->
+    <section class="sec" style="padding-top:56px">
+        <div class="lr">
+            <div class="lr-text">
+                <div class="sec-num">01</div>
+                <div class="sec-label">Context</div>
+                <h2 class="sec-title">Facemoji already owns the expression layer of messaging</h2>
+                <p class="body">Facemoji is one of the largest expression-first keyboards globally. With 550M+ downloads across 170+ countries, it is not starting from zero &mdash; it already sits at the center of how people communicate visually.</p>
+                <div class="tag-row">
+                    <span class="tag">6,000+ emojis</span>
+                    <span class="tag">Stickers &amp; GIFs</span>
+                    <span class="tag">1,500+ themes</span>
+                    <span class="tag">200+ text styles</span>
+                    <span class="tag">AI writing &amp; translation</span>
+                </div>
+                <p class="note">Ranked #9 in Andreessen Horowitz's Top 50 GenAI Mobile Apps (2024).</p>
+            </div>
+            <div class="lr-visual">
+                <img src="/FaceEmoji/2ab85278495f2dbd74bb8df1b21ad6c.jpg" alt="Facemoji Face Emoji features">
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================== 02 BEHAVIOR SHIFT ====================== -->
+    <div class="divider"></div>
+    <section class="sec sec--alt">
+        <div class="narrow">
+            <div class="sec-num">02</div>
+            <div class="sec-label">Behavior Shift</div>
+            <h2 class="sec-title">Communication has become expressive, but responding is still manual</h2>
+            <p class="body">Digital communication has shifted from text-only to visual, emotionally rich interaction. Modern messaging includes emojis, stickers, GIFs, memes, and visual reactions. Yet responding still follows the same loop.</p>
+        </div>
+
+        <div class="mid" style="margin-top:28px">
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-value">10B+</div><div class="stat-label">Emojis sent daily</div></div>
+                <div class="stat-card"><div class="stat-value">92%</div><div class="stat-label">Internet users use emojis</div></div>
+                <div class="stat-card"><div class="stat-value">91%</div><div class="stat-label">Say emoji help express themselves</div></div>
+                <div class="stat-card"><div class="stat-value">69%</div><div class="stat-label">Prefer emoji over text for emotions</div></div>
+            </div>
+        </div>
+
+        <div class="narrow">
+            <p class="body-sm">Gen Z uses emojis in <strong>57% of online communications</strong>. 88% of Gen Z workers say emoji are helpful even in workplace messaging. The shift isn't just cultural &mdash; it's structural.</p>
+            <div class="tldr"><span class="tldr-pre">&#128204; TL;DR &mdash;</span> Predictive keyboards improve typing speed. They do not reduce the effort of deciding <em>how</em> to respond.</div>
+        </div>
+    </section>
+
+    <!-- ====================== 03 USER FEEDBACK ====================== -->
+    <div class="divider"></div>
+    <section class="sec">
+        <div class="lr">
+            <div class="lr-text">
+                <div class="sec-num">03</div>
+                <div class="sec-label">User Feedback</div>
+                <h2 class="sec-title">We analyzed hundreds of user reviews to identify what users actually want</h2>
+                <p class="sub-sm" style="margin-top:24px">What users love</p>
+                <ul class="bl">
+                    <li>Expressive emojis, stickers, and GIFs</li>
+                    <li>Playful themes and fonts</li>
+                    <li>Personalization and aesthetic identity</li>
+                </ul>
+            </div>
+            <div class="lr-visual">
+                <img src="/FaceEmoji/31a79a3090e378c1af6ccb27cf85ed1.jpg" alt="Facemoji stickers">
+            </div>
+        </div>
+
+        <div class="narrow" style="margin-top:24px">
+            <p class="sub-sm">Where users struggle</p>
+            <div class="pain-grid">
+                <div class="pain-card"><div class="pain-card-icon">&#9888;&#65039;</div><h3>Reliability</h3><p>Keyboard glitches, disappearing, lost themes and saved keyboards</p></div>
+                <div class="pain-card"><div class="pain-card-icon">&#128275;</div><h3>Control</h3><p>AI features feel intrusive, settings hard to manage, can't turn features off</p></div>
+                <div class="pain-card"><div class="pain-card-icon">&#9000;&#65039;</div><h3>Typing Quality</h3><p>Weak autocorrect, inaccurate swipe typing, poor voice typing</p></div>
+                <div class="pain-card"><div class="pain-card-icon">&#128176;</div><h3>Monetization Friction</h3><p>Too many ads disrupting flow, premium features locked behind paywall</p></div>
+            </div>
+
+            <div class="tldr"><span class="tldr-pre">&#128204; TL;DR &mdash;</span> Users don't want "more AI." They want expressive communication without friction.</div>
+        </div>
+
+        <!-- ICP bar chart -->
+        <div class="lr" style="margin-top:20px">
+            <div class="lr-text">
+                <p class="sub">Primary ICP: Gen Z expressive communicators</p>
+                <p class="body-sm">Proxy demographic data from emoji-heavy app usage. <strong>79% of users are under 35.</strong> This audience is active on TikTok, Instagram, Snapchat, Discord, and WhatsApp &mdash; platforms where expression-first messaging is the default.</p>
+                <p class="body-sm">Gen Z spends ~3.5 hours/day across social platforms. <strong>49% use TikTok for product discovery</strong>. 41% turn to social media first for information &mdash; ahead of search engines (32%).</p>
+            </div>
+            <div>
+                <div style="background:var(--bg-warm);border-radius:16px;padding:28px 24px;">
+                    <div class="bar-row"><div class="bar-label">18&ndash;24</div><div class="bar-track"><div class="bar-fill bar-fill--1" style="width:0%" data-width="51%">51%</div></div><div class="bar-pct">51.3%</div></div>
+                    <div class="bar-row"><div class="bar-label">25&ndash;34</div><div class="bar-track"><div class="bar-fill bar-fill--2" style="width:0%" data-width="28%">28%</div></div><div class="bar-pct">28.3%</div></div>
+                    <div class="bar-row"><div class="bar-label">35&ndash;44</div><div class="bar-track"><div class="bar-fill bar-fill--3" style="width:0%" data-width="12%">12%</div></div><div class="bar-pct">12.1%</div></div>
+                    <div class="bar-row"><div class="bar-label">45+</div><div class="bar-track"><div class="bar-fill bar-fill--4" style="width:0%" data-width="9%">9%</div></div><div class="bar-pct">8.3%</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================== 04 COMPETITIVE ====================== -->
+    <div class="divider"></div>
+    <section class="sec sec--alt">
+        <div class="narrow">
+            <div class="sec-num">04</div>
+            <div class="sec-label">Competitive Landscape</div>
+            <h2 class="sec-title">Current keyboards solve typing or writing &mdash; not expressive response decisions</h2>
+            <p class="body">The keyboard market splits into three categories. None address the gap between expression and intelligence. The virtual keyboard market is valued at <strong>$1.1B (2022)</strong>, projected to reach <strong>$2B by 2032</strong>.</p>
+        </div>
+
+        <div class="wide" style="margin-top:28px">
+            <div class="comp-grid">
+                <div class="comp-card"><div class="comp-tag">System Keyboards</div><h3>Gboard, SwiftKey</h3><p>Typing infrastructure, emoji search, translation. Gboard has 10B+ downloads via pre-installation. SwiftKey leads North America through Microsoft ecosystem integration.</p></div>
+                <div class="comp-card"><div class="comp-tag">Expression Keyboards</div><h3>Facemoji, Kika, Bobble, FancyKey</h3><p>Emojis, stickers, themes, fonts, visual identity. Rich creative tools but limited AI intelligence. Growth via personalization novelty.</p></div>
+                <div class="comp-card"><div class="comp-tag">AI Writing Keyboards</div><h3>Grammarly, CleverType</h3><p>Grammar correction, rewrite, tone change. Grammarly has 40M DAU, $700M revenue. Powerful generation but no expression layer.</p></div>
+            </div>
+        </div>
+
+        <div class="mid">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:32px 24px 20px;margin:32px 0">
+                <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;text-align:center">Competitive Positioning Map</div>
+                <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+                    <!-- Background quadrants -->
+                    <rect x="60" y="20" width="300" height="185" fill="#FAFAFA" rx="6"/>
+                    <rect x="360" y="20" width="300" height="185" fill="#F0EEFF" rx="6"/>
+                    <rect x="60" y="205" width="300" height="185" fill="#FAFAFA" rx="6"/>
+                    <rect x="360" y="205" width="300" height="185" fill="#F9F9F7" rx="6"/>
+                    <!-- Axes -->
+                    <line x1="60" y1="390" x2="660" y2="390" stroke="#D4D4CF" stroke-width="1.5"/>
+                    <line x1="60" y1="20" x2="60" y2="390" stroke="#D4D4CF" stroke-width="1.5"/>
+                    <polygon points="660,390 652,386 652,394" fill="#D4D4CF"/>
+                    <polygon points="60,20 56,28 64,28" fill="#D4D4CF"/>
+                    <!-- Axis labels -->
+                    <text x="360" y="414" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#999" font-weight="500">Typing Infrastructure &#8594; Expressive Communication</text>
+                    <text x="22" y="205" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#999" font-weight="500" transform="rotate(-90,22,205)">No AI &#8594; AI-Powered</text>
+                    <!-- Quadrant labels -->
+                    <text x="210" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#BBB" font-weight="500">AI + Typing</text>
+                    <text x="510" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#7C3AED" font-weight="600" opacity=".5">AI + Expression</text>
+                    <text x="210" y="378" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#BBB" font-weight="500">Basic Typing</text>
+                    <text x="510" y="378" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#BBB" font-weight="500">Basic Expression</text>
+                    <!-- Competitors -->
+                    <circle cx="200" cy="100" r="28" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="200" y="104" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#555" font-weight="500">Gboard</text>
+                    <circle cx="265" cy="130" r="26" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="265" y="134" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#555" font-weight="500">SwiftKey</text>
+                    <circle cx="155" cy="150" r="28" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="155" y="147" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#555" font-weight="500">Gram-</text><text x="155" y="159" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#555" font-weight="500">marly</text>
+                    <circle cx="430" cy="195" r="22" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="430" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#555" font-weight="500">Clever-</text><text x="430" y="204" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#555" font-weight="500">Type</text>
+                    <circle cx="470" cy="300" r="20" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="470" y="304" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#999" font-weight="500">Kika</text>
+                    <circle cx="540" cy="320" r="20" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="540" y="317" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#999" font-weight="500">Fancy-</text><text x="540" y="329" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#999" font-weight="500">Key</text>
+                    <circle cx="420" cy="340" r="18" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="420" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#999" font-weight="500">GO</text>
+                    <circle cx="500" cy="270" r="20" fill="#F0F0EC" stroke="#D4D4CF" stroke-width="1.5"/><text x="500" y="274" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#999" font-weight="500">Bobble</text>
+                    <!-- Facemoji AI opportunity -->
+                    <circle cx="570" cy="80" r="40" fill="#4F46E5" opacity=".08"/>
+                    <circle cx="570" cy="80" r="28" fill="#4F46E5" opacity=".9"/>
+                    <text x="570" y="76" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#fff" font-weight="700">Facemoji</text>
+                    <text x="570" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#fff" font-weight="700">AI &#10033;</text>
+                    <circle cx="570" cy="80" r="48" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-dasharray="5 4" opacity=".35"/>
+                </svg>
+            </div>
+            <div class="gap-callout"><p>No keyboard today owns AI-powered expressive communication &mdash; helping users decide how to react, respond, and express the right tone.</p></div>
+        </div>
+    </section>
+
+    <!-- ====================== 05 MARKET INSIGHT ====================== -->
+    <div class="divider"></div>
+    <section class="sec">
+        <div class="narrow">
+            <div class="sec-num">05</div>
+            <div class="sec-label">Market Insight</div>
+            <h2 class="sec-title">The market optimized for novelty, but users want communication outcomes</h2>
+            <p class="body">Successful players implicitly understand users want quick emotional expression, personalization, multilingual support, and fast daily texting. But the category is built on three fragile assumptions:</p>
+
+            <div class="assumption"><div class="assumption-num">01</div><div class="assumption-old">"Customization drives retention"</div><div class="assumption-new">&#8594; Users switch back to native keyboards when performance drops or the experience becomes intrusive.</div><p style="font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5"><em>Source: Facemoji app store reviews consistently cite reliability as the #1 reason for uninstalling. Gboard retains users primarily through pre-installation and performance, not customization.</em></p></div>
+            <div class="assumption"><div class="assumption-num">02</div><div class="assumption-old">"Ads can sustain the free model"</div><div class="assumption-new">&#8594; Excessive ad load creates direct friction in a high-frequency product.</div><p style="font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5"><em>Source: "Too many ads" is the most common 1-star complaint across expression keyboards (Facemoji, Kika, GO Keyboard) on Google Play. Grammarly's ad-free freemium model drove $700M revenue &mdash; proving friction-free UX converts better.</em></p></div>
+            <div class="assumption"><div class="assumption-num">03</div><div class="assumption-old">"Emoji novelty drives long-term growth"</div><div class="assumption-new">&#8594; Users increasingly care about faster communication decisions, not more emoji packs.</div><p style="font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5"><em>Source: Gen Z uses emoji in 57% of communications (Emojipedia 2025), but engagement with new emoji packs has plateaued. Meanwhile, AI writing tools (Grammarly, ChatGPT) are the fastest-growing keyboard-adjacent category.</em></p></div>
+
+            <div class="tldr" style="margin-top:20px"><span class="tldr-pre">&#128204; Opportunity &mdash;</span> Build AI that helps users react instantly, respond quickly, express tone naturally, and communicate across languages &mdash; without interrupting typing.</div>
+        </div>
+    </section>
+
+    <!-- ====================== 06 PRODUCT VISION ====================== -->
+    <div class="divider"></div>
+    <section class="sec sec--alt">
+        <div class="narrow">
+            <div class="sec-num">06</div>
+            <div class="sec-label">Product Vision</div>
+            <h2 class="sec-title">Facemoji becomes the AI Copilot for expressive communication</h2>
+        </div>
+
+        <div class="wide" style="margin-top:28px">
+            <div class="vision-grid">
+                <div class="vision-card"><div class="vision-icon">&#9889;</div><h3>React</h3><p>Context-aware emoji suggestions, GIFs, stickers, and meme-style replies based on conversation tone</p></div>
+                <div class="vision-card"><div class="vision-icon">&#128172;</div><h3>Reply</h3><p>Smart replies, message summaries, tone rewrite, and real-time translation across 150+ languages</p></div>
+                <div class="vision-card"><div class="vision-icon">&#9997;&#65039;</div><h3>Create</h3><p>Captions, hashtags, meme text, text-art, and AI-generated sticker/emoji packs</p></div>
+                <div class="vision-card"><div class="vision-icon">&#127919;</div><h3>Act</h3><p>Search, planning, recommendations, and next-step prompts &mdash; all inside the chat</p></div>
+                <div class="vision-card"><div class="vision-icon">&#127908;</div><h3>Voice AI</h3><p>Voice-to-text with tone detection, voice-triggered AI commands, and speech-to-emoji conversion</p></div>
+                <div class="vision-card"><div class="vision-icon">&#129520;</div><h3>Social Twin</h3><p>AI learns your personal style, slang, emoji patterns, and tone &mdash; generating replies that sound like <em>you</em></p></div>
+            </div>
+        </div>
+
+        <div class="narrow">
+            <div class="tldr" style="margin-bottom:20px"><span class="tldr-pre">&#128204; Principle &mdash;</span> Not a separate chat app. Not an intrusive toolbar. Not a Grammarly clone. AI should be <strong>assistive, optional, fast, and native to the keyboard.</strong></div>
+
+            <div class="scenarios-title">How it works in practice</div>
+        </div>
+        <div class="mid">
+            <div class="scenarios-row">
+                <div class="scenario"><div class="scenario-label">Celebrating</div><div class="chat-window"><div class="chat-bubble chat-in">I just got promoted!! &#127881;&#127881;</div><div class="chat-hint">AI suggests:</div><div class="ai-chips"><span class="ai-chip">&#127881;&#127881;&#127881;</span><span class="ai-chip">LETS GOOO &#128293;</span><span class="ai-chip">drinks tonight??</span></div></div></div>
+                <div class="scenario"><div class="scenario-label">Making plans</div><div class="chat-window"><div class="chat-bubble chat-in">Want sushi tonight? &#127843;</div><div class="chat-hint">AI suggests:</div><div class="ai-chips"><span class="ai-chip">Yes!! &#127843;</span><span class="ai-chip">&#128340; 7pm?</span><span class="ai-chip">Find sushi nearby</span></div></div></div>
+                <div class="scenario"><div class="scenario-label">Multilingual</div><div class="chat-window"><div class="chat-bubble chat-in">&iquest;Oye quieres ir al cine esta noche?</div><div class="chat-hint">&#127760; "Want to go to the movies?"</div><div class="ai-chips"><span class="ai-chip">&iexcl;S&iacute;, vamos!</span><span class="ai-chip">&iquest;A qu&eacute; hora?</span></div></div></div>
+            </div>
+        </div>
+
+        <!-- Prototype showcase with labels -->
+        <div class="phone-gallery" style="margin-top:28px">
+            <p style="text-align:center;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:16px">Reimagined Prototype</p>
+            <div class="phone-gallery-inner">
+                <div style="flex-shrink:0;text-align:center">
+                    <img src="/FaceEmoji/image copy.png" alt="Prototype: Themes" style="width:220px">
+                    <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Themes</p>
+                    <p style="font-size:11px;color:var(--text-muted)">Redesigned with AI Agent tab</p>
+                </div>
+                <div style="flex-shrink:0;text-align:center">
+                    <img src="/FaceEmoji/image copy 2.png" alt="Prototype: Fonts" style="width:220px">
+                    <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Fonts</p>
+                    <p style="font-size:11px;color:var(--text-muted)">Clean typography system</p>
+                </div>
+                <div style="flex-shrink:0;text-align:center">
+                    <img src="/FaceEmoji/image copy 3.png" alt="Prototype: Emoji Art" style="width:220px">
+                    <p style="font-size:12px;font-weight:600;color:var(--text);margin-top:10px">Emoji Art</p>
+                    <p style="font-size:11px;color:var(--text-muted)">Interactive pixel canvas</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="narrow"><div class="cta" style="padding-bottom:12px"><a href="/FaceEmoji/prototype.html" class="demo-btn">Try the Interactive Demo &rarr;</a></div></div>
+    </section>
+
+    <!-- ====================== 07 VALUE, MONETIZATION & GTM ====================== -->
+    <div class="divider"></div>
+    <section class="sec">
+        <div class="narrow">
+            <div class="sec-num">07</div>
+            <div class="sec-label">Value, Monetization &amp; U.S. Growth</div>
+            <h2 class="sec-title">Facemoji AI creates user value, unlocks monetization, and supports U.S. growth</h2>
+
+            <!-- 7A: USER VALUE -->
+            <p class="sub">7A. User Value</p>
+            <p class="body">The clearest unmet need from reviews: <strong>faster expressive communication with less friction.</strong> Facemoji AI reduces the cognitive load of "what do I say next?"</p>
+            <ul class="bl" style="margin-bottom:20px">
+                <li>Reply faster without drafting from scratch</li>
+                <li>Express emotion and tone more clearly</li>
+                <li>Generate captions, meme text, and social-ready content</li>
+                <li>Communicate across languages instantly</li>
+                <li>Take actions (search, plan, recommend) without leaving the keyboard</li>
+            </ul>
+
+            <!-- 7B: MONETIZATION -->
+            <p class="sub">7B. Monetization Playbook</p>
+            <p class="body-sm">Three revenue paths, each validated by comparable products:</p>
+        </div>
+
+        <!-- Monetization case studies -->
+        <div class="mid" style="margin-top:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+                <div class="case-card" style="margin-bottom:0">
+                    <div class="case-card-header"><div class="case-card-logo">&#128221;</div><h4>A. Freemium AI Subscription</h4></div>
+                    <p>Keyboard-native AI is a proven paid model. Users pay when AI saves time in their most frequent daily activity.</p>
+                    <span class="case-stat">Grammarly: 40M DAU, ~$700M rev</span>
+                    <span class="case-stat">CleverType: $4.99/mo iOS</span>
+                    <span class="case-stat">$13B+ valuation</span>
+                    <p style="margin-top:6px">Free core keyboard + paid AI power features (smart reply, meme generation, translation). Grammarly's keyboard-to-desktop funnel converts at $12/mo.</p>
+                </div>
+                <div class="case-card" style="margin-bottom:0">
+                    <div class="case-card-header"><div class="case-card-logo">&#127912;</div><h4>B. Creator Marketplace</h4></div>
+                    <p>User-generated expression content as a self-sustaining revenue engine. LINE proved this at massive scale.</p>
+                    <span class="case-stat">LINE: $75M sticker sales (Yr 1)</span>
+                    <span class="case-stat">390K &rarr; 4M creators</span>
+                    <span class="case-stat">Top creators: $1M+</span>
+                    <p style="margin-top:6px">LINE takes 50% revenue share. Flywheel: more creators &rarr; more stickers &rarr; more purchases. Facemoji replicates with AI-generated stickers, emoji packs, themes.</p>
+                </div>
+            </div>
+            <div class="case-card">
+                <div class="case-card-header"><div class="case-card-logo">&#10024;</div><h4>C. AI Content Generation Upsell</h4></div>
+                <p>Premium AI tools (meme generators, avatar creation, caption tools, AI sticker packs) deliver direct social utility &mdash; natural paid upgrades. Users pay for tools that make their messages more interesting.</p>
+            </div>
+        </div>
+
+        <!-- 7C: GTM PLAYBOOK -->
+        <div class="narrow" style="margin-top:28px">
+            <p class="sub">7C. U.S. GTM Playbook</p>
+            <p class="body">A strong U.S. GTM should focus on where Gen Z already communicates, discovers products, and expresses identity. The playbook combines channel strategy, viral mechanics, and phased rollout.</p>
+        </div>
+
+        <!-- Channel strategy -->
+        <div class="mid" style="margin-top:24px">
+            <p class="sub-sm">Primary channels</p>
+            <div class="channel-grid">
+                <div class="channel-card">
+                    <div class="channel-icon">&#127909;</div>
+                    <h4>TikTok</h4>
+                    <p>~6 in 10 US teens use daily</p>
+                    <div class="channel-stat">89 min/day</div>
+                    <p style="margin-top:4px">49% use for product discovery</p>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">&#128248;</div>
+                    <h4>Instagram</h4>
+                    <p>58% of Gen Z use daily</p>
+                    <div class="channel-stat">52.4M</div>
+                    <p style="margin-top:4px">Gen Z users in the U.S.</p>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">&#128123;</div>
+                    <h4>Snapchat</h4>
+                    <p>55% of US teens, 68% weekly</p>
+                    <div class="channel-stat">453M DAU</div>
+                    <p style="margin-top:4px">Global daily active users</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparable GTM case studies -->
+        <div class="narrow" style="margin-top:24px">
+            <p class="sub-sm">Comparable GTM case studies</p>
+        </div>
+
+        <div class="lr" style="margin-top:20px">
+            <div class="lr-text">
+                <div class="case-card" style="margin-bottom:0">
+                    <div class="case-card-header"><div class="case-card-logo">&#128123;</div><h4>Bitmoji &times; Snapchat</h4></div>
+                    <p>Snap acquired Bitmoji in 2016 for ~$100M. Deep keyboard + chat integration made Bitmoji the <strong>#1 iOS app in 2017</strong>. Bitmoji proved that personalized expression tools, when embedded in messaging, create powerful distribution loops.</p>
+                    <span class="case-stat">#1 iOS App (2017)</span>
+                    <span class="case-stat">150M &rarr; 453M DAU</span>
+                    <p style="margin-top:8px"><strong>Lesson:</strong> Embed expression tools where people already message. The keyboard is the distribution channel.</p>
+                </div>
+            </div>
+            <div class="lr-text">
+                <div class="case-card" style="margin-bottom:0">
+                    <div class="case-card-header"><div class="case-card-logo">&#129417;</div><h4>Duolingo's Social Strategy</h4></div>
+                    <p>Duolingo grew from 37M to 116.7M MAU partly through an "unhinged" TikTok strategy led by a single hire. Their content-first approach generated <strong>17M TikTok followers</strong> and was named Ad Age Social Marketer of the Year.</p>
+                    <span class="case-stat">37M &rarr; 116.7M MAU</span>
+                    <span class="case-stat">17M TikTok followers</span>
+                    <span class="case-stat">11% engagement rate</span>
+                    <p style="margin-top:8px"><strong>Lesson:</strong> Brand personality on TikTok can be a primary growth engine, not just awareness. Facemoji's expressive outputs (meme replies, AI stickers) are inherently shareable content.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GTM Phased Timeline -->
+        <div class="narrow" style="margin-top:24px">
+            <p class="sub-sm">Phased rollout</p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-phase">Phase 1 &mdash; Seed (Month 1&ndash;3)</div>
+                    <div class="timeline-title">Launch AI-native shareable use cases</div>
+                    <div class="timeline-desc">Meme reply generator, "rizz" tone-based reply generation, AI caption tool for TikTok/IG. Ship as free features to maximize installs. Seed content on TikTok with 10&ndash;20 micro-influencer partnerships demonstrating outputs.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-phase">Phase 2 &mdash; Grow (Month 3&ndash;6)</div>
+                    <div class="timeline-title">Build the viral loop</div>
+                    <div class="timeline-desc">Launch AI sticker/Genmoji-like creation. Every shared sticker, caption, or meme reply becomes marketing. Add watermark/branding on generated content. Introduce creator tools for power users to publish custom packs.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-phase">Phase 3 &mdash; Monetize (Month 6&ndash;12)</div>
+                    <div class="timeline-title">Activate paid features &amp; creator marketplace</div>
+                    <div class="timeline-desc">Launch Facemoji Pro subscription (advanced AI, unlimited generation, premium sticker packs). Open creator marketplace with revenue share. Introduce AI content upsells (avatar tools, premium meme templates, custom theme generation).</div>
+                </div>
+            </div>
+
+            <p class="sub-sm" style="margin-top:20px">Viral mechanics</p>
+            <p class="body-sm">The core insight: in an expression keyboard, <strong>the output itself is the marketing</strong>. Every meme reply shared in a group chat, every AI caption posted to Instagram, every custom sticker sent on WhatsApp carries implicit distribution.</p>
+
+            <div class="tldr"><span class="tldr-pre">&#128204; Growth loop &mdash;</span> Better messages &rarr; more sharing &rarr; more installs &rarr; more creators &rarr; more paid content &rarr; stronger retention.</div>
+        </div>
+    </section>
+
+    <!-- ====================== 08 TECHNICAL ARCHITECTURE ====================== -->
+    <div class="divider"></div>
+    <section class="sec sec--alt">
+        <div class="narrow">
+            <div class="sec-num">08</div>
+            <div class="sec-label">Technical Architecture</div>
+            <h2 class="sec-title">Facemoji AI can be implemented as a lightweight multi-agent system</h2>
+        </div>
+
+        <div class="full-img bordered"><img src="/FaceEmoji/slide 8.png" alt="Facemoji AI Agent Technical Architecture"></div>
+
+        <div class="narrow">
+            <p class="body-sm" style="margin-bottom:28px">The diagram above shows the full pipeline from messaging apps to keyboard UI. Here's how each layer works:</p>
+            <ol class="arch-list">
+                <li class="arch-item"><span class="arch-num">01</span><div><span class="arch-label">Conversation Context</span> &mdash; Captures recent messages, detects language &amp; tone, reads emoji &amp; emotional signals from messaging apps (WhatsApp, iMessage, Instagram, Snapchat, Discord)</div></li>
+                <li class="arch-item"><span class="arch-num">02</span><div><span class="arch-label">Context Analyzer</span> &mdash; Understands tone, detects topic, and builds a real-time snapshot of the conversation to inform downstream decisions</div></li>
+                <li class="arch-item"><span class="arch-num">03</span><div><span class="arch-label">Intent Detection</span> &mdash; Classifies user intent: summarize, reply, translate, or plan &mdash; routing each to the appropriate agent</div></li>
+                <li class="arch-item"><span class="arch-num">04</span><div><span class="arch-label">Agent Orchestrator</span> &mdash; Routes to specialized agents: Reaction Agent (emoji/GIF/meme), Conversation Agent (smart reply/rewrite), Action Agent (search/plan), Creation Agent (captions/stickers), and Social Twin Agent (personalized style mirroring)</div></li>
+                <li class="arch-item"><span class="arch-num">05</span><div><span class="arch-label">AI Models</span> &mdash; LLM for text generation &amp; summarization; Multimodal AI for images, stickers, and avatars; Ranking Model for fast suggestion ordering; Voice stack for speech-to-text and voice commands</div></li>
+                <li class="arch-item"><span class="arch-num">06</span><div><span class="arch-label">Suggestion Layer &amp; Keyboard UI</span> &mdash; Surfaces outputs as quick replies, emojis &amp; GIFs, and action cards &mdash; delivered instantly inside the keyboard interface. On-device for latency-sensitive ranking; cloud for heavy generation.</div></li>
+            </ol>
+            <div class="tldr" style="margin-top:24px"><span class="tldr-pre">&#128204; Design rule &mdash;</span> AI must remain fast, optional, and non-intrusive to preserve the core keyboard experience.</div>
+        </div>
+    </section>
+
+    <!-- ====================== FOOTER ====================== -->
+    <footer class="case-footer">
+        <div class="narrow"><p>Amy Zhuang &middot; 2025</p></div>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll',function(){var h=document.documentElement;var p=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;document.getElementById('progressFill').style.width=p+'%'});
+        var animated=false;function animateBars(){if(animated)return;var bars=document.querySelectorAll('.bar-fill');if(!bars[0])return;if(bars[0].getBoundingClientRect().top<window.innerHeight-60){animated=true;bars.forEach(function(b){b.style.width=b.getAttribute('data-width')})}}
+        window.addEventListener('scroll',animateBars);window.addEventListener('load',animateBars);
+    </script>
+</body>
+</html>

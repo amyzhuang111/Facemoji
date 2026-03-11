@@ -1,0 +1,436 @@
+Slide 1 — Context
+Facemoji already operates at the center of expressive communication
+
+Facemoji is one of the largest expression-first keyboards globally.
+
+550M+ global downloads
+
+170+ countries and regions
+
+#9 in Andreessen Horowitz’s Top 50 GenAI Mobile Apps (2024)
+
+Facemoji’s current product stack already includes:
+
+6,000+ emojis
+
+stickers and GIFs
+
+1,500+ themes
+
+200+ fancy text styles
+
+AI writing and translation tools
+
+Implication: Facemoji is not starting from zero. It already owns the expression layer of messaging.
+
+Slide 2 — Behavior shift + problem
+Communication has become expressive, but responding is still manual
+
+Digital communication has shifted from text-only messaging to visual, fast, emotionally rich interaction.
+
+10B+ emojis are sent globally every day
+
+92% of online users use emojis
+
+91% of U.S. emoji users say emoji make it easier to express themselves
+
+69% of Gen Z and Millennials say they are more comfortable expressing emotions with emoji than text alone
+
+Modern messaging now includes:
+
+emojis
+
+stickers
+
+GIFs
+
+memes
+
+visual reactions
+
+Yet responding still follows the same loop:
+
+Read → Think → Type
+
+Predictive keyboards improve typing speed.
+They do not reduce the effort of deciding how to respond.
+
+Slide 3 — User feedback
+We analyzed hundreds of user reviews to identify what users actually want
+
+Across hundreds of user reviews, users consistently praise:
+
+expressive emojis, stickers, and GIFs
+
+playful themes and fonts
+
+personalization and aesthetic identity
+
+But complaints repeatedly cluster around four issues:
+
+Reliability
+
+keyboard glitches
+
+keyboard disappearing
+
+lost themes and saved keyboards
+
+Control
+
+AI features feel intrusive
+
+toolbar/settings are hard to manage
+
+users cannot easily turn features off
+
+Typing quality
+
+weak autocorrect
+
+inaccurate swipe typing
+
+poor voice typing
+
+Monetization friction
+
+too many ads
+
+premium features locked
+
+Insight: Users do not want “more AI.”
+They want expressive communication without friction.
+
+Slide 4 — Competitive landscape
+Current keyboards solve typing or writing, not expressive response decisions
+
+The market splits into three categories.
+
+System keyboards
+
+Gboard: typing infrastructure, emoji/GIF search, translation, multilingual typing
+
+SwiftKey: prediction, personalization, AI-assisted typing
+
+Expression keyboards
+
+Facemoji, Kika, Bobble, FancyKey, GO Keyboard
+
+Core value: emojis, stickers, themes, fonts, visual identity
+
+AI writing keyboards
+
+Grammarly: grammar correction, rewrite, AI writing assistance
+
+CleverType: AI rewrite, tone change, translation, premium AI keyboard plans
+
+Gap in the market:
+No keyboard today owns AI-powered expressive communication — helping users decide:
+
+how to react
+
+how to respond
+
+what to say next
+
+how to express the right tone
+
+Slide 5 — Market insight + opportunity
+The market optimized for novelty, but users actually want communication outcomes
+
+Successful players implicitly understand that users want:
+
+quick emotional expression without words
+
+personalization to stand out in chats
+
+multilingual support
+
+fast, accurate daily texting
+These needs appear repeatedly across keyboard positioning and adjacent market behavior.
+
+But the category is still built on three fragile assumptions:
+
+Customization drives retention
+In reality, users switch back to native keyboards when performance drops or the experience becomes intrusive.
+
+Ads can sustain the free model
+In reality, excessive ad load creates direct friction in a high-frequency product.
+
+Emoji novelty drives long-term growth
+In reality, users increasingly care less about “more emoji” and more about faster communication decisions.
+
+Opportunity:
+Build AI that helps users:
+
+react instantly
+
+respond quickly
+
+express tone naturally
+
+communicate across languages
+
+take the next action inside the conversation
+
+Without interrupting typing.
+
+Slide 6 — Product vision
+Facemoji becomes the AI Copilot for expressive communication
+
+Facemoji AI helps users across four core jobs:
+
+React
+
+emoji suggestions
+
+GIFs and stickers
+
+meme-style replies
+
+Reply
+
+smart replies
+
+summaries
+
+rewrite
+
+translation
+
+Create
+
+captions
+
+hashtags
+
+meme text
+
+text-art / stylized expression
+
+Act
+
+search
+
+planning
+
+recommendations
+
+next-step prompts inside chat
+
+North-star product principle:
+AI should be:
+
+assistive
+
+optional
+
+fast
+
+native to the keyboard
+
+Not a separate chat app.
+Not an intrusive toolbar.
+Not a Grammarly clone.
+
+Slide 7 — Value creation, monetization, and U.S. expansion
+Facemoji AI creates user value, unlocks monetization, and supports U.S. growth
+1. How it creates value for users
+
+From the review analysis, the clearest unmet user need is:
+
+faster expressive communication with less friction
+
+Facemoji AI creates value by helping users:
+
+reply faster without drafting from scratch
+
+express emotion and tone more clearly
+
+generate captions, meme text, and social-ready content
+
+communicate across languages
+
+reduce the mental effort of “what do I say next?”
+
+This matters most for Facemoji’s primary ICP: Gen Z expressive communicators.
+
+Using the proxy demographic dataset you provided from Emojiall, the audience skews heavily young:
+
+18–24: 51.32%
+
+25–34: 28.25%
+
+79.57% under 35
+
+2. How users and the platform generate revenue
+
+The strongest monetization paths are already validated in adjacent products.
+
+A. Freemium subscription for AI power users
+This is already proven in AI writing keyboards:
+
+Grammarly offers paid Pro access for advanced writing and AI features.
+
+CleverType sells premium AI keyboard plans, including $4.99/month mobile pricing on iOS.
+
+Implication: users are already willing to pay for keyboard-native AI assistance.
+
+B. Creator marketplace for stickers, emoji, and themes
+This is already proven by LINE:
+
+LINE Creators Market allows users to create and sell stickers, emoji, and themes worldwide.
+
+In its first year, LINE reported JPY 8.94B in sticker sales, with 390,000+ registered creators and top creators averaging JPY 100M+ in revenue among the best sellers.
+
+LINE also documents ongoing creator revenue share payouts and notes some creators earn hundreds of thousands of yen per month.
+
+Implication: Facemoji can extend from a keyboard utility into a creator economy platform through AI-generated stickers, emoji packs, themes, and shareable assets.
+
+C. AI content generation upsell
+AI meme generators, avatar tools, caption tools, and premium personalization are natural paid upgrades because they deliver direct social utility rather than just decoration.
+
+3. GTM motion for U.S. expansion
+
+A strong U.S. GTM should focus on where Gen Z already communicates and expresses identity.
+
+Primary channels
+
+TikTok
+
+Instagram
+
+Snapchat
+
+Pew reports that among U.S. teens:
+
+about 6 in 10 use TikTok
+
+about 6 in 10 use Instagram
+
+55% use Snapchat
+
+GTM motion
+
+Launch AI-native expressive use cases that are inherently shareable:
+
+meme replies
+
+“rizz” or tone-based reply generation
+
+caption generation
+
+AI stickers / Genmoji-like creation
+
+Use creator and influencer partnerships to demonstrate outputs in-platform.
+
+Build viral loops where the output itself becomes marketing:
+
+posted captions
+
+shared stickers
+
+meme replies
+
+custom themes
+
+Growth thesis:
+Better messages → more sharing → more installs → more creators → more paid content → stronger retention.
+
+Slide 8 — High-level technical thinking and implementation
+Facemoji AI can be implemented as a lightweight multi-agent system
+1. Context layer
+
+Inputs:
+
+current typed text
+
+recent conversation snippets
+
+language detection
+
+user preferences / style signals
+
+2. Understanding layer
+
+Use an LLM-based classifier to detect:
+
+reaction intent
+
+reply intent
+
+translation need
+
+creation request
+
+action / planning intent
+
+3. Agent layer
+
+Route to specialized agents:
+
+Reaction Agent
+emoji, GIF, sticker, meme-style outputs
+
+Conversation Agent
+smart replies, summaries, rewrite, translation
+
+Creation Agent
+captions, meme text, emoji combos, AI expression tools
+
+Action Agent
+search, planning, recommendation cards, lightweight task help
+
+Future: Social Twin
+personalized reply style based on user tone and expression patterns
+
+4. Model stack
+
+LLM for generation, summarization, translation
+
+ranking model for fast suggestion ordering
+
+multimodal / AIGC model for image, sticker, emoji, and avatar generation
+
+voice stack for speech-to-text input and voice-triggered assistance
+
+5. Delivery layer
+
+Surface outputs as:
+
+suggestion chips
+
+emoji strip
+
+quick reply buttons
+
+action cards
+
+optional bottom sheet
+
+6. Implementation principle
+
+Use a hybrid approach:
+
+On-device
+
+ranking
+
+autocomplete
+
+lightweight personalization
+
+fast latency-sensitive suggestions
+
+Cloud
+
+heavier generation
+
+translation
+
+multimodal creation
+
+richer reasoning
+
+Critical design rule:
+AI must remain fast, optional, and non-intrusive to preserve the core keyboard experience.

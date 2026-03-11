@@ -1,0 +1,971 @@
+# Facemoji AI Agent Proposal Deck — Build README for Claude Code
+
+## Objective
+
+Create a polished, high-conviction slide deck that answers:
+
+> How can we transform Facemoji Keyboard into an AI Agent?
+
+The final deck should be strategic, specific, visually clear, and directly responsive to the assignment. It should feel like a product strategy deck prepared by a top-tier PM / founder / AI product strategist.
+
+This is **not** a generic AI deck and **not** a generic keyboard market overview.  
+It must be tightly centered on **Facemoji**, its actual user base, its market position, and the specific opportunity to evolve the keyboard into an **AI Agent for expressive communication across apps**.
+
+---
+
+## Deliverable
+
+Build a **13-slide main deck** plus a short **appendix**.
+
+### Main deck
+1. Title  
+2. Executive Summary  
+3. Market Shift + Facemoji Today  
+4. ICP, User Segmentation, and Current Use Cases  
+5. Competitive Landscape  
+6. Competitive Map  
+7. User Feedback Insights  
+8. Product Vision, Positioning, and Core Agent System  
+9. Key User Scenarios  
+10. Why This Creates Value and Wins in the U.S.  
+11. Technical Architecture  
+12. Roadmap  
+13. Conclusion  
+
+### Appendix
+- Additional market research
+- Investor / stress-test questions
+- Category assumptions
+- Risks and challenges
+
+---
+
+## Core Strategic Thesis
+
+The keyboard is the only surface that appears across nearly every communication app:
+- iMessage
+- WhatsApp
+- Instagram
+- Snapchat
+- TikTok
+- Discord
+- Gmail
+- Notes
+- Docs
+
+That makes it a uniquely powerful surface for an AI agent.
+
+But Facemoji should **not** become:
+- a generic chatbot
+- a generic productivity assistant
+- a Grammarly clone
+- an enterprise writing tool
+
+Facemoji’s strongest opportunity is to become:
+
+## **The AI Copilot for Expressive Communication**
+
+Its wedge is:
+- reaction
+- expression
+- social fluency
+- creator-friendly communication
+- lightweight task help inside messaging flows
+
+---
+
+## Non-Negotiable Product Position
+
+You must preserve this framing throughout the deck:
+
+### Facemoji is primarily an expression-first keyboard, not a professional productivity keyboard.
+
+This means the AI strategy should focus on:
+- reaction
+- creativity
+- short-form messaging assistance
+- captions
+- translation
+- expressive replies
+- simple action execution within conversation
+
+Not on:
+- enterprise email drafting
+- work copilots as the hero story
+- long-form writing
+- B2B productivity
+
+You can mention broader use cases, but the deck should clearly reflect Facemoji’s real likely user base.
+
+---
+
+## Background Context to Use
+
+Facemoji today is an expressive mobile keyboard with:
+- emojis
+- GIFs
+- stickers
+- fonts
+- themes
+- AI writing
+- translation
+- meme / avatar tools
+- social communication features
+
+Known signals:
+- 550M+ global downloads
+- available in 170+ countries / regions
+- ranked in a16z’s Top 50 Gen AI Mobile Apps
+- strong usage around expressive communication, social chat, and creator-friendly messaging behavior
+
+The company’s prompt is:
+
+> Facemoji Keyboard is exploring the next evolution of AI experiences. Instead of adding standalone AI features, we want to rethink the keyboard as an AI Agent that helps users accomplish real tasks across apps.
+
+The proposal must include:
+- a clear product vision for an AI Agent keyboard
+- key use cases and user scenarios
+- how it creates value for users and helps growth in the U.S. market
+- high-level technical thinking (LLM, AIGC, voice, image, multimodal, etc.) and how it could be implemented
+
+---
+
+## Slide-by-Slide Requirements
+
+---
+
+# Slide 1 — Title
+
+## Goal
+Create a crisp title slide.
+
+## Must include
+- Title: **Facemoji AI Agent Keyboard**
+- Subtitle: something like  
+  **Transforming the keyboard into the AI layer for communication across apps**
+- author / date
+
+## Design guidance
+- strong, modern consumer AI aesthetic
+- should feel premium and strategic, not academic
+
+---
+
+# Slide 2 — Executive Summary
+
+## Goal
+Summarize the whole proposal in 4–5 bullets.
+
+## Must communicate
+- communication behavior has changed
+- the keyboard is the highest-frequency cross-app interface
+- Facemoji already owns the expression layer
+- the opportunity is to turn it into an AI agent
+- final strategy line:
+  **Facemoji becomes the AI copilot for expressive communication**
+
+## Tone
+- concise
+- high-conviction
+- strategic
+
+---
+
+# Slide 3 — Market Shift + Facemoji Today
+
+## Goal
+Combine:
+1. why the market is changing
+2. why Facemoji is well positioned now
+
+## Part A: Communication Has Changed
+Show that messaging is increasingly driven by:
+- emojis
+- memes
+- GIFs
+- short reactions
+- visual identity
+- lightweight emotional expression
+
+Key point:
+People increasingly want to communicate emotion and intent faster than they want to type full sentences.
+
+If useful, reference emoji growth / Unicode trend as a supporting visual or appendix item.
+
+## Part B: Why Facemoji Is Well Positioned
+Include:
+- 550M+ global downloads
+- 170+ countries / regions
+- ranked in a16z Top 50 Gen AI Mobile Apps
+- current feature base:
+  - emojis
+  - stickers
+  - GIFs
+  - fonts
+  - themes
+  - rewrite
+  - translation
+  - meme / avatar features
+
+## Core takeaway
+Facemoji already owns the **fun / expression layer** of messaging.
+
+---
+
+# Slide 4 — ICP, User Segmentation, and Current Use Cases
+
+## Goal
+This should be one of the strongest slides in the deck.
+
+You must explicitly identify:
+- who Facemoji’s core users are
+- what segments matter most
+- what they currently use the product for
+- what this implies for AI strategy
+
+## Primary ICP
+### Gen Z and young millennial social communicators
+Characteristics:
+- mobile-first
+- frequent texters
+- emoji / sticker / meme-heavy
+- active on TikTok, Instagram, Snapchat, Discord, WhatsApp, iMessage
+- care about identity, humor, aesthetics, self-expression, and fast reactions
+
+## Secondary Segments
+Include:
+- **Social media creators**
+  - captions, comments, expressive text
+- **Gamers**
+  - fast, slang-heavy, short-form communication
+- **Multilingual/global texters**
+  - translation + cross-language messaging
+- **Aesthetic customizers**
+  - themes, fonts, personalization
+
+## Age segmentation
+Use as directional segmentation:
+- **18–24**: likely core cohort, highest emoji / meme fluency
+- **25–34**: second core cohort, balances expression and utility
+- **35–44**: moderate fit, may value convenience and translation more than customization
+- **45+**: not the primary growth wedge
+
+## Current most common use cases
+Include:
+- daily texting with expressive content
+- emoji / GIF / sticker reactions
+- social media captions and comments
+- keyboard personalization
+- kaomoji / internet-culture expression
+- multilingual typing and translation
+- gaming chat
+
+## Required strategic insight
+State clearly:
+
+**Facemoji is primarily an expression-first keyboard, not a professional productivity keyboard.**
+
+Therefore the AI strategy should focus on:
+- reaction
+- creativity
+- social fluency
+- messaging assistance
+
+not enterprise writing.
+
+---
+
+# Slide 5 — Competitive Landscape
+
+## Goal
+Show the keyboard market clearly and simply.
+
+## Organize competitors into 3 categories
+
+### 1. System keyboards
+- Gboard
+- Microsoft SwiftKey
+
+Core strengths:
+- speed
+- reliability
+- prediction
+- OS integration
+
+### 2. Expression / customization keyboards
+- Facemoji
+- Kika Keyboard
+- FancyKey
+- GO Keyboard / GO Keyboard Pro
+- Bobble AI Keyboard
+
+Core strengths:
+- themes
+- emojis
+- stickers
+- customization
+- identity expression
+
+### 3. AI writing keyboards
+- Grammarly Keyboard
+- CleverType AI Keyboard
+
+Core strengths:
+- rewriting
+- grammar
+- translation
+- tone adjustment
+
+## Required takeaway
+No player currently combines:
+- expressive communication
+- AI intelligence
+- conversation context
+- lightweight cross-app assistance
+
+This is the open space for Facemoji.
+
+---
+
+# Slide 6 — Competitive Map
+
+## Goal
+Add the 2x2 market map.
+
+## Axes
+- **X-axis:** Typing Infrastructure → Expressive Communication
+- **Y-axis:** No AI → AI-Powered Assistance
+
+## Include this exact or very similar mapping
+
+```text
+                     AI-Powered Assistance
+                          ↑
+                          |
+        Grammarly          CleverType
+     (writing AI)       (AI rewrite tools)
+                          |
+                          |
+                          |
+Typing Infrastructure --------------------------- Expressive Communication
+                          |
+         SwiftKey          Facemoji (Opportunity)
+     (AI prediction)     (AI social communication)
+                          |
+                          |
+                          |
+           Gboard         Kika / FancyKey / GO / Bobble
+     (system keyboard)   (emoji & themes)
+                          |
+                          ↓
+                       No AI
+Must state clearly
+
+Facemoji’s opportunity is to define the open category of:
+
+AI-powered expressive communication
+
+This is more differentiated than competing head-on with:
+
+Gboard on typing
+
+Grammarly on professional writing
+
+Slide 7 — User Feedback Insights
+Goal
+
+Use customer review synthesis to shape the product thesis.
+
+What users love
+
+Include:
+
+expressive themes and visual identity
+
+emojis, stickers, fonts, and fun
+
+cute, playful customization
+
+social communication tools
+
+What users hate
+
+Include:
+
+intrusive AI
+
+keyboard glitches / disappearing keyboard
+
+weak autocorrect / voice typing
+
+ads
+
+settings that are hard to control
+
+lost themes / missing sync
+
+font / emoji compatibility issues
+
+Required takeaway
+
+Users want:
+
+reliability first
+
+expression second
+
+AI only when useful and controllable
+
+This should be explicitly tied to the AI agent strategy.
+
+Slide 8 — Product Vision, Positioning, and Core Agent System
+Goal
+
+Combine old slides on vision, positioning, and agent system into one strong strategy slide.
+
+Product Vision
+
+Transform Facemoji from a customization keyboard into an:
+
+AI Agent for expressive communication
+Positioning
+Facemoji = the AI Copilot for Expressive Communication
+
+It should be framed as:
+
+socially aware
+
+emoji-native
+
+creator-friendly
+
+fast
+
+cross-app
+
+personalized
+
+It should explicitly not be framed as:
+
+a generic chatbot
+
+a Grammarly clone
+
+a work-productivity keyboard
+
+Core Agent System
+1. Reaction Agent
+
+Helps users instantly send:
+
+emojis
+
+GIFs
+
+stickers
+
+meme-style replies
+
+2. Conversation Agent
+
+Helps users:
+
+summarize messages
+
+generate smart replies
+
+rewrite tone
+
+translate across languages
+
+3. Action Agent
+
+Detects intent and helps users:
+
+search
+
+plan dinner
+
+pick times
+
+recommend places
+
+draft responses
+
+Final idea on this slide
+
+The keyboard should become a place where users can:
+
+react
+
+reply
+
+create
+
+act
+
+without leaving the conversation.
+
+Slide 9 — Key User Scenarios
+Goal
+
+Show concrete, believable user scenarios.
+
+Must include at least these 5 scenarios
+Scenario 1 — Smart Reaction
+
+Friend:
+“I just got promoted!”
+
+AI suggests:
+
+LETS GOOO 🔥🔥
+
+🎉🎉🎉
+
+celebration sticker / GIF
+
+Scenario 2 — Long Message Summary
+
+User receives a long message.
+
+AI summarizes:
+
+meeting moved to Friday
+
+slides due Thursday
+
+asks for confirmation
+
+Then suggests replies.
+
+Scenario 3 — Dinner Planning
+
+User types:
+“let’s get sushi tonight”
+
+AI suggests:
+
+nearby sushi spots
+
+time options
+
+message draft:
+
+“Want to do Sushi Tama at 7?”
+
+Scenario 4 — Multilingual Messaging
+
+User receives a message in Spanish.
+
+AI:
+
+translates it
+
+suggests a Spanish reply
+
+Scenario 5 — Creator Use Case
+
+User types:
+“caption for beach photo”
+
+AI generates:
+
+caption options
+
+emoji combinations
+
+hashtags
+
+Optional extra
+
+Gaming / meme chat / flirty rewrite / “make it funnier” can be included if space allows.
+
+Slide 10 — Why This Creates Value and Wins in the U.S.
+Goal
+
+Combine user value and U.S. growth case.
+
+User value
+
+Include:
+
+faster replies
+
+better reactions
+
+less cognitive effort
+
+more expressive messaging
+
+easier multilingual communication
+
+content creation help inside the keyboard
+
+Why it can grow in the U.S.
+
+Include:
+
+strong Gen Z / young millennial messaging culture
+
+high use of emojis, memes, and social-first communication
+
+large creator economy
+
+high receptivity to lightweight AI help
+
+meaningful multicultural / multilingual communication needs
+
+overlap between messaging, content creation, and identity expression
+
+Growth loop
+
+State that AI-generated:
+
+reactions
+
+captions
+
+stickers
+
+meme replies
+
+can improve delight, sharing, and retention.
+
+Slide 11 — Technical Architecture
+Goal
+
+Provide a practical but high-level system architecture.
+
+Core layers
+1. Input / Context Layer
+
+typed text
+
+recent message context
+
+language detection
+
+user preferences
+
+2. Intent / Emotion Layer
+
+Classifies whether the user wants:
+
+reaction
+
+reply
+
+rewrite
+
+translate
+
+action
+
+3. Agent Orchestration Layer
+
+Routes to:
+
+Reaction Agent
+
+Conversation Agent
+
+Action Agent
+
+4. Model Layer
+
+LLM for generation / summarization / translation
+
+lightweight ranking model for fast suggestion ranking
+
+optional multimodal model for sticker / emoji / image generation
+
+5. Delivery Layer
+
+inline chips
+
+suggestion strip
+
+bottom sheet
+
+quick action cards
+
+voice trigger
+
+Infrastructure approach
+
+On-device:
+
+autocomplete
+
+ranking
+
+lightweight personalization
+
+Cloud:
+
+complex generation
+
+translation
+
+multimodal outputs
+
+Critical principle
+
+AI must feel:
+
+fast
+
+optional
+
+assistive
+
+non-intrusive
+
+Slide 12 — Roadmap
+Goal
+
+Show staged product evolution.
+
+Phase 1 — Reaction AI
+
+emoji suggestions
+
+meme replies
+
+GIF / sticker recommendations
+
+caption generator
+
+Phase 2 — Conversation Intelligence
+
+summaries
+
+smart replies
+
+rewrite
+
+translation
+
+Phase 3 — Action Layer
+
+search
+
+dinner planning
+
+scheduling support
+
+richer across-app assistance
+
+Phase 4 — Personalized Social Twin
+
+learns your tone
+
+adapts to your style
+
+deeper context memory
+
+more personalized communication support
+
+Slide 13 — Conclusion
+Goal
+
+Land the strategy clearly and memorably.
+
+Must include final category framing
+
+Facemoji has the chance to define a new category:
+
+AI-powered expressive communication
+Contrast framing
+
+If:
+
+Gboard owns typing
+
+SwiftKey owns prediction
+
+Grammarly owns writing quality
+
+Then Facemoji can own:
+
+reaction
+
+expression
+
+social fluency
+
+lightweight cross-app communication assistance
+
+Final closing line
+
+Use something like:
+
+Facemoji becomes the AI that helps users react, reply, create, and act in every conversation.
+
+Appendix Requirements
+
+Move the following out of the main deck into appendix only:
+
+Appendix A — Additional Market Research
+
+broader emoji growth visuals
+
+supporting category notes
+
+extra market stats
+
+Appendix B — Investor / Stress-Test Questions
+
+Examples:
+
+Why won’t Google or Microsoft copy this?
+
+Is this just novelty?
+
+Can monetization work?
+
+Can a third-party keyboard retain users?
+
+Is the U.S. target big enough?
+
+Appendix C — Market Assumptions
+
+Examples:
+
+users keep third-party keyboards installed
+
+AI can help without becoming intrusive
+
+freemium + premium monetization is sustainable
+
+Appendix D — Risks and Challenges
+
+Include:
+
+reliability / performance
+
+intrusive AI
+
+privacy concerns
+
+monetization vs UX
+
+copy risk
+
+platform dependency
+
+What to Exclude From Main Deck
+
+Do not keep these in the core story unless they are moved to appendix:
+
+detailed investor Q&A
+
+category-destroying questions
+
+deep market assumption analysis
+
+long risk sections
+
+overly broad side analysis not directly answering the prompt
+
+Keep the main deck tight and directly relevant.
+
+Visual / Design Instructions
+Style
+
+polished
+
+modern
+
+strategic
+
+consumer AI aesthetic
+
+expressive but not childish
+
+Visuals to use
+
+simple charts
+
+competitive 2x2
+
+agent system diagram
+
+roadmap timeline
+
+scenario mockups
+
+user segmentation graphic
+
+Avoid
+
+overly text-heavy slides
+
+academic formatting
+
+clutter
+
+too many appendix-style details in the core deck
+
+Tone Instructions
+
+Write like:
+
+a strong PM strategy deck
+
+concise, high-conviction, and practical
+
+not buzzword-heavy
+
+not too corporate
+
+not too vague
+
+The reviewer should feel:
+
+this understands Facemoji’s real audience
+
+this is strategically differentiated
+
+this is grounded in product reality
+
+this could plausibly become a roadmap
+
+Success Criteria
+
+A strong final deck should make a reviewer think:
+
+“This understands Facemoji’s actual user base.”
+
+“This is not generic AI brainstorming.”
+
+“This clearly differentiates from Gboard, SwiftKey, and Grammarly.”
+
+“The product vision feels both ambitious and believable.”
+
+“The roadmap is concrete.”
+
+“The strategy directly answers the assignment.”
+
+Optional Bonus Deliverables
+
+If possible, also produce:
+
+speaker notes / presenter script
+
+a clean appendix
+
+1–2 UI mockup slides
+
+a concise executive summary page version
+
+Final Reminder
+
+Do not drift into a generic “AI for everything” pitch.
+
+The winning strategy is:
+
+Facemoji = AI Copilot for Expressive Communication
+
+That should be the backbone of the entire deck.
